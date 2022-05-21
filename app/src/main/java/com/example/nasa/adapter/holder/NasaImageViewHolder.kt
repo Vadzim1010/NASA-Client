@@ -1,6 +1,5 @@
 package com.example.nasa.adapter.holder
 
-import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.size.Scale

@@ -1,4 +1,4 @@
-package com.example.nasa.retrofit.model
+package com.example.nasa.network.model
 
 import com.google.gson.annotations.SerializedName
 

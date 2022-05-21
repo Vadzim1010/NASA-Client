@@ -1,6 +1,6 @@
 package com.example.nasa.koin
 
-import com.example.nasa.retrofit.NasaApi
+import com.example.nasa.network.NasaApi
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

@@ -1,6 +1,6 @@
-package com.example.nasa.retrofit
+package com.example.nasa.network
 
-import com.example.nasa.retrofit.model.NasaResponse
+import com.example.nasa.network.model.NasaResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

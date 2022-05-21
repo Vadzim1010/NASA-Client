@@ -1,10 +1,7 @@
 package com.example.nasa
 
 import android.app.Application
-import com.example.nasa.koin.networkModule
-import com.example.nasa.koin.pagingModule
-import com.example.nasa.koin.repositoryModule
-import com.example.nasa.koin.viewModelModule
+import com.example.nasa.koin.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -20,6 +17,7 @@ class NasaApplication : Application() {
                 repositoryModule,
                 pagingModule,
                 viewModelModule,
+                databaseModule,
             )
         }
     }

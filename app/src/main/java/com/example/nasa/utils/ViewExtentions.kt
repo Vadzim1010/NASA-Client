@@ -12,7 +12,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 
 
-fun RecyclerView.addPagingScrollFlow(
+fun RecyclerView.addScrollListenerFlow(
     layoutManager: LinearLayoutManager,
     itemsToLoad: Int
 ) = callbackFlow {
