@@ -23,6 +23,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    buildFeatures {
+        viewBinding true
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -70,4 +73,8 @@ dependencies {
     // lifecycle
     def lifecycle_version = "2.4.1"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+
+    //koin
+    def koin_version = "3.2.0"
+    implementation "io.insert-koin:koin-android:$koin_version"
 }
