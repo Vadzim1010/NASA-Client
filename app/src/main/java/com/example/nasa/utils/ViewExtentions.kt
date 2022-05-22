@@ -7,6 +7,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.nasa.R
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
@@ -35,7 +36,7 @@ fun RecyclerView.addScrollListenerFlow(
     }
 }
 
-fun RecyclerView.addBottomSpaceDecorationRes(@DimenRes bottomSpaceRes: Int) {
+fun RecyclerView.addBottomSpaceDecorationRes(@DimenRes spaceRes: Int) {
     addItemDecoration(object : RecyclerView.ItemDecoration() {
         override fun getItemOffsets(
             outRect: Rect,
@@ -46,31 +47,31 @@ fun RecyclerView.addBottomSpaceDecorationRes(@DimenRes bottomSpaceRes: Int) {
             val itemCount = parent.adapter?.itemCount ?: return
             val position = parent.getChildAdapterPosition(view)
             if (position != itemCount - 1) {
-                outRect.bottom = bottomSpaceRes
+                outRect.bottom = spaceRes
             }
         }
     })
 }
-//
-//fun Toolbar.onSearchListenerFlow() = callbackFlow {
-//    val searchView = menu.findItem(R.id.search).actionView as SearchView
-//
-//    val queryTextListener = object : SearchView.OnQueryTextListener {
-//        override fun onQueryTextSubmit(query: String?): Boolean {
-//            return false
-//        }
-//
-//        override fun onQueryTextChange(newText: String?): Boolean {
-//            this@callbackFlow.trySend(newText)
-//            return true
-//        }
-//    }
-//
-//    searchView.setOnQueryTextListener(queryTextListener)
-//
-//    awaitClose {
-//        searchView.setOnQueryTextListener(null)
-//    }
-//}
+
+fun Toolbar.onSearchListenerFlow() = callbackFlow {
+    val searchView = menu.findItem(R.id.search).actionView as SearchView
+
+    val queryTextListener = object : SearchView.OnQueryTextListener {
+        override fun onQueryTextSubmit(query: String?): Boolean {
+            return false
+        }
+
+        override fun onQueryTextChange(newText: String?): Boolean {
+            this@callbackFlow.trySend(newText)
+            return true
+        }
+    }
+
+    searchView.setOnQueryTextListener(queryTextListener)
+
+    awaitClose {
+        searchView.setOnQueryTextListener(null)
+    }
+}
 
 

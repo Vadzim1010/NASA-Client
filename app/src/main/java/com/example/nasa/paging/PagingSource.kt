@@ -2,15 +2,16 @@ package com.example.nasa.paging
 
 import com.example.nasa.model.LceState
 import com.example.nasa.model.NasaImage
-import com.example.nasa.repository.LocalRepository
-import com.example.nasa.repository.RemoteRepository
+import com.example.nasa.repository.LocalNasaImagesRepository
+import com.example.nasa.repository.RemoteNasaImagesRepository
+import com.example.nasa.utils.LAST_PAGE
 import com.example.nasa.utils.log
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
 class PagingSource(
-    private val remoteRepository: RemoteRepository,
-    private val localRepository: LocalRepository,
+    private val remoteRepository: RemoteNasaImagesRepository,
+    private val localRepository: LocalNasaImagesRepository,
 ) {
 
 
@@ -18,18 +19,15 @@ class PagingSource(
         replay = 1, extraBufferCapacity = 0, onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
-    private val _pagingSourceFlow = MutableSharedFlow<List<NasaImage>>(
-        replay = 1, extraBufferCapacity = 0, onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
-    val pagingSourceFlow = _pagingSourceFlow.asSharedFlow()
-
     private var currentList = listOf<NasaImage>()
     private var currentPage = 1
     private var isLoading = false
 
 
     fun onLoadMore() {
-        loadStateFlow.tryEmit(LoadState.LOAD_MORE)
+        if (currentPage <= LAST_PAGE) {
+            loadStateFlow.tryEmit(LoadState.LOAD_MORE)
+        }
     }
 
     fun onRefresh() {
@@ -80,6 +78,12 @@ class PagingSource(
         }
         .onStart {
             emit(LceState.Loading)
+
+            val cacheList = localRepository.getImagePage(currentPage)
+
+            if (cacheList.isNotEmpty()) {
+                emit(LceState.Content(cacheList))
+            }
         }
 }
 

@@ -15,7 +15,6 @@ import com.example.nasa.model.LceState
 import com.example.nasa.paging.PagingItem
 import com.example.nasa.utils.addBottomSpaceDecorationRes
 import com.example.nasa.utils.addScrollListenerFlow
-import com.example.nasa.utils.log
 import com.example.nasa.utils.mapToPage
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
@@ -69,7 +68,7 @@ class NasaImagesFragment : Fragment() {
                         nasaImagesAdapter.submitList(networkList)
                     }
                     is LceState.Error -> {
-                        val cacheList = lceState.data.mapToPage + PagingItem.Loading
+                        val cacheList = lceState.data.mapToPage
 
                         nasaImagesAdapter.submitList(cacheList)
                     }

@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">NASA</string>
     <string name="nasa_image">NASA image</string>
+    <string name="search">Search</string>
+    <string name="start_year">start year</string>
+    <string name="end_year">end year</string>
+    <string name="min_year">1920</string>
+    <string name="max_year">2022</string>
 </resources>
