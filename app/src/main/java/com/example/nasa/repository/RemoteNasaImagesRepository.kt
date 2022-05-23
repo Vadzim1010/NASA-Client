@@ -6,5 +6,5 @@ interface RemoteNasaImagesRepository {
 
     suspend fun fetchNasaImages(page: Int): Result<List<NasaImage>>
 
-    suspend fun getTotalContentLength(): Int
+    suspend fun getContentLength() : Int
 }

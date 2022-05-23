@@ -9,18 +9,17 @@ class RemoteNasaImagesRepositoryImpl(
     private val nasaApi: NasaApi,
 ) : RemoteNasaImagesRepository {
 
-    private var totalContentLength = 0
+    private var contentLength = 0
 
     override suspend fun fetchNasaImages(page: Int) = runCatching {
         delay(2000) // delay for testing
         val response = nasaApi.getNasaImages(page, 2015)
 
-        totalContentLength = response.collection.metadata.totalHits
+        contentLength = response.collection.metadata.totalHits
 
-        response.mapToModel
+        response
+            .mapToModel
     }
 
-    override suspend fun getTotalContentLength() = totalContentLength
-
-
+    override suspend fun getContentLength() = contentLength
 }

@@ -5,6 +5,7 @@ import com.example.nasa.model.NasaImage
 import com.example.nasa.repository.LocalNasaImagesRepository
 import com.example.nasa.repository.RemoteNasaImagesRepository
 import com.example.nasa.utils.LAST_PAGE
+import com.example.nasa.utils.PAGE_LIMIT
 import com.example.nasa.utils.log
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
@@ -22,10 +23,11 @@ class PagingSource(
     private var currentList = listOf<NasaImage>()
     private var currentPage = 1
     private var isLoading = false
+    private var hasMoreToLoad = true
 
 
     fun onLoadMore() {
-        if (currentPage <= LAST_PAGE) {
+        if (hasMoreToLoad && !isLoading) {
             loadStateFlow.tryEmit(LoadState.LOAD_MORE)
         }
     }
@@ -35,9 +37,9 @@ class PagingSource(
     }
 
     fun getNasaImagePage() = loadStateFlow
-        .filter { !isLoading }
         .onEach {
             isLoading = true
+            log("isLoading: $isLoading")
         }
         .onEach {
             if (it == LoadState.REFRESH) {
@@ -54,20 +56,35 @@ class PagingSource(
                     onSuccess = { networkPageList ->
                         localRepository.insertImagePage(currentPage, networkPageList)
 
-                        currentPage++
+                        val contentLength = remoteRepository.getContentLength()
+                        log("content length : $contentLength")
+
+                        hasMoreToLoad = true
+                        if ((PAGE_LIMIT * currentPage) >= contentLength || currentPage == LAST_PAGE) {
+                            hasMoreToLoad = false
+                        } else {
+                            currentPage++
+                        }
 
                         currentList = currentList + networkPageList
 
-                        LceState.Content(currentList)
+                        log("load network")
+
+                        LceState.Content(currentList, hasMoreToLoad)
                     },
                     onFailure = { throwable ->
                         val cacheList = localRepository.getImagePage(currentPage)
 
-                        if (cacheList.isNotEmpty()) {
+                        hasMoreToLoad = true
+                        if (cacheList.isEmpty() || currentPage == LAST_PAGE) {
+                            hasMoreToLoad = false
+                        } else {
                             currentPage++
                         }
 
                         currentList = currentList + cacheList
+
+                        log("load cache")
 
                         LceState.Error(currentList, throwable)
                     }
@@ -75,6 +92,7 @@ class PagingSource(
         }
         .onEach {
             isLoading = false
+            log("isLoading: $isLoading")
         }
         .onStart {
             emit(LceState.Loading)
@@ -82,7 +100,8 @@ class PagingSource(
             val cacheList = localRepository.getImagePage(currentPage)
 
             if (cacheList.isNotEmpty()) {
-                emit(LceState.Content(cacheList))
+                log("load cache")
+                emit(LceState.Content(cacheList, hasMoreToLoad))
             }
         }
 }

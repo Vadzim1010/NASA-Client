@@ -12,9 +12,11 @@ import com.example.nasa.R
 import com.example.nasa.adapter.NasaImagesAdapter
 import com.example.nasa.databinding.FragmentNasaImagesBinding
 import com.example.nasa.model.LceState
+import com.example.nasa.model.NasaImage
 import com.example.nasa.paging.PagingItem
 import com.example.nasa.utils.addBottomSpaceDecorationRes
 import com.example.nasa.utils.addScrollListenerFlow
+import com.example.nasa.utils.log
 import com.example.nasa.utils.mapToPage
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
@@ -63,7 +65,15 @@ class NasaImagesFragment : Fragment() {
                 binding.progressCircular.isVisible = lceState == LceState.Loading
                 when (lceState) {
                     is LceState.Content -> {
-                        val networkList = lceState.data.mapToPage + PagingItem.Loading
+                        var networkList: List<PagingItem<NasaImage>>
+
+                        networkList = lceState.data.mapToPage
+
+                        log("content size: ${lceState.data.size}")
+
+                        if (lceState.hasMoreToLoad) {
+                            networkList = lceState.data.mapToPage + PagingItem.Loading
+                        }
 
                         nasaImagesAdapter.submitList(networkList)
                     }
@@ -73,7 +83,7 @@ class NasaImagesFragment : Fragment() {
                         nasaImagesAdapter.submitList(cacheList)
                     }
                     LceState.Loading -> {
-                        println()
+                        //no op
                     }
                 }
             }
@@ -96,7 +106,6 @@ class NasaImagesFragment : Fragment() {
                 layoutManager = manager,
                 itemsToLoad = 30,
             )
-                .debounce(400)
                 .onEach {
                     viewModel.onLoadMore()
                 }
