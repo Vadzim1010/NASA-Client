@@ -2,6 +2,7 @@ package com.example.nasa.ui.image
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.nasa.model.SearchParams
 import com.example.nasa.paging.PagingSource
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,8 +20,8 @@ class NasaImageViewModel(private val pagingSource: PagingSource) : ViewModel() {
         pagingSource.onLoadMore()
     }
 
-    fun getImagesPagingSource() = pagingSource
-        .getNasaImagePage()
+    fun getImagesPagingSource(searchParams: SearchParams) = pagingSource
+        .getNasaImagePage(searchParams)
         .shareIn(
             scope = viewModelScope,
             started = SharingStarted.Eagerly,

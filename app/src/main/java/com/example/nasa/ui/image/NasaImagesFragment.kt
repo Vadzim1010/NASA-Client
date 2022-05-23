@@ -13,6 +13,7 @@ import com.example.nasa.adapter.NasaImagesAdapter
 import com.example.nasa.databinding.FragmentNasaImagesBinding
 import com.example.nasa.model.LceState
 import com.example.nasa.model.NasaImage
+import com.example.nasa.model.SearchParams
 import com.example.nasa.paging.PagingItem
 import com.example.nasa.utils.addBottomSpaceDecorationRes
 import com.example.nasa.utils.addScrollListenerFlow
@@ -55,7 +56,7 @@ class NasaImagesFragment : Fragment() {
 
     private fun subscribeOnPagingData() {
         viewModel
-            .getImagesPagingSource()
+            .getImagesPagingSource(SearchParams())
             .onEach {
                 if (it != LceState.Loading) {
                     binding.swipeRefresh.isRefreshing = false

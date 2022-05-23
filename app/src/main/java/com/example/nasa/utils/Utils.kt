@@ -3,6 +3,7 @@ package com.example.nasa.utils
 import android.util.Log
 import com.example.nasa.database.entity.NasaImageEntity
 import com.example.nasa.model.NasaImage
+import com.example.nasa.model.SearchParams
 import com.example.nasa.network.model.NasaImagesResponse
 import com.example.nasa.paging.PagingItem
 import java.util.*
@@ -25,7 +26,8 @@ val NasaImagesResponse.mapToModel: List<NasaImage>
         }
 
 
-fun List<NasaImage>.mapToEntity(page: Int) = this.map { it.toEntity(page) }
+fun List<NasaImage>.mapToEntity(page: Int, searchParams: SearchParams) =
+    this.map { it.toEntity(page, searchParams) }
 
 fun log(message: String) {
     Log.i("TAG", message)

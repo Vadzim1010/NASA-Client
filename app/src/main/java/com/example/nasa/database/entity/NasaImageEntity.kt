@@ -11,7 +11,14 @@ data class NasaImageEntity(
     val id: String,
     @ColumnInfo(name = "image_url")
     val imageUrl: String,
+    @ColumnInfo(name = "page")
     val page: Int,
+    @ColumnInfo(name = "search")
+    val search: String,
+    @ColumnInfo(name = "year_start")
+    val yearStart: Int,
+    @ColumnInfo(name = "year_end")
+    val yearEnd: Int,
 ) {
 
     fun toModel() = NasaImage(

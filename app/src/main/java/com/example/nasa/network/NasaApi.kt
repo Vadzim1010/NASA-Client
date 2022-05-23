@@ -10,7 +10,9 @@ interface NasaApi {
     @GET("/search")
     suspend fun getNasaImages(
         @Query("page") page: Int,
+        @Query("q") searchParams: String,
         @Query("year_start") yearStart: Int,
+        @Query("year_end") yearEnd: Int,
         @Query("media_type") mediaType: String = "image",
     ): NasaImagesResponse
 }

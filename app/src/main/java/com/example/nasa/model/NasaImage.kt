@@ -7,9 +7,12 @@ data class NasaImage(
     val imageUrl: String,
 ) {
 
-    fun toEntity(page: Int) = NasaImageEntity(
+    fun toEntity(page: Int, searchParams: SearchParams) = NasaImageEntity(
         id = id,
         imageUrl = imageUrl,
         page = page,
+        search = searchParams.search,
+        yearStart = searchParams.yearStart,
+        yearEnd = searchParams.yearEnd,
     )
 }

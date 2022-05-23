@@ -2,6 +2,7 @@ package com.example.nasa.paging
 
 import com.example.nasa.model.LceState
 import com.example.nasa.model.NasaImage
+import com.example.nasa.model.SearchParams
 import com.example.nasa.repository.LocalNasaImagesRepository
 import com.example.nasa.repository.RemoteNasaImagesRepository
 import com.example.nasa.utils.LAST_PAGE
@@ -36,7 +37,7 @@ class PagingSource(
         loadStateFlow.tryEmit(LoadState.REFRESH)
     }
 
-    fun getNasaImagePage() = loadStateFlow
+    fun getNasaImagePage(searchParams: SearchParams) = loadStateFlow
         .onEach {
             isLoading = true
             log("isLoading: $isLoading")
@@ -51,10 +52,10 @@ class PagingSource(
             log("page $currentPage")
         }
         .map {
-            remoteRepository.fetchNasaImages(currentPage)
+            remoteRepository.fetchNasaImages(currentPage, searchParams)
                 .fold(
                     onSuccess = { networkPageList ->
-                        localRepository.insertImagePage(currentPage, networkPageList)
+                        localRepository.insertImagePage(currentPage, searchParams, networkPageList)
 
                         val contentLength = remoteRepository.getContentLength()
                         log("content length : $contentLength")
@@ -73,7 +74,7 @@ class PagingSource(
                         LceState.Content(currentList, hasMoreToLoad)
                     },
                     onFailure = { throwable ->
-                        val cacheList = localRepository.getImagePage(currentPage)
+                        val cacheList = localRepository.getImagePage(currentPage, searchParams)
 
                         hasMoreToLoad = true
                         if (cacheList.isEmpty() || currentPage == LAST_PAGE) {
@@ -97,7 +98,7 @@ class PagingSource(
         .onStart {
             emit(LceState.Loading)
 
-            val cacheList = localRepository.getImagePage(currentPage)
+            val cacheList = localRepository.getImagePage(currentPage, searchParams)
 
             if (cacheList.isNotEmpty()) {
                 log("load cache")
