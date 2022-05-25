@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nasa.R
 import com.example.nasa.adapter.NasaImagesAdapter
 import com.example.nasa.databinding.FragmentNasaImagesBinding
-import com.example.nasa.model.NasaImage
 import com.example.nasa.model.SearchParams
 import com.example.nasa.paging.PagingItem
 import com.example.nasa.utils.*
@@ -34,6 +33,7 @@ class NasaImagesFragment : Fragment() {
             findNavController().navigate(NasaImagesFragmentDirections.toDescription(it))
         }
     }
+    private val searchParams = SearchParams()
 
 
     override fun onCreateView(
@@ -48,8 +48,6 @@ class NasaImagesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val searchParams = SearchParams()
-
         initRecycler()
         initSwipeRefresh()
         initSearchListener(searchParams)
@@ -61,43 +59,41 @@ class NasaImagesFragment : Fragment() {
         viewModel
             .getImagesPagingSource(searchParams)
             .onEach {
-                if (it !is Resource.Loading) {
-                    swipeRefresh.isRefreshing = false
-                }
-                if (it !is Resource.Loading) {
-                    progressCircular.isVisible = false
-                }
-            }
-            .onEach {
                 log(searchParams.toString())
             }
             .onEach { resource ->
                 when (resource) {
                     is Resource.Success -> {
-                        var networkList: List<PagingItem<NasaImage>>
-
-                        networkList = resource.data.mapToPage
-
                         log("content size: ${resource.data.size}")
 
-                        if (resource.hasMoreToLoad) {
-                            networkList = resource.data.mapToPage + PagingItem.Loading
+                        val networkList = if (!resource.isLastPage) {
+                            resource.data.mapToPage + PagingItem.Loading
+                        } else {
+                            resource.data.mapToPage
                         }
 
                         nasaImagesAdapter.submitList(networkList)
                     }
                     is Resource.Error -> {
-                        val cacheList = resource.data.mapToPage
+                        val cacheList = resource.data?.mapToPage
 
                         nasaImagesAdapter.submitList(cacheList)
                     }
                     is Resource.Loading -> {
-                        val cacheList = resource.data.mapToPage
+                        val cacheList = resource.data?.mapToPage
 
-                        progressCircular.isVisible = cacheList.isEmpty()
+                        progressCircular.isVisible = cacheList?.isNullOrEmpty() ?: false
 
                         nasaImagesAdapter.submitList(cacheList)
                     }
+                }
+            }
+            .onEach {
+                if (it !is Resource.Loading) {
+                    swipeRefresh.isRefreshing = false
+                }
+                if (it !is Resource.Loading) {
+                    progressCircular.isVisible = false
                 }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)

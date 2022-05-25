@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.nasa.database.entity.NasaImageEntity
 import com.example.nasa.model.NasaImage
 import com.example.nasa.model.SearchParams
-import com.example.nasa.network.model.NasaImagesResponse
+import com.example.nasa.network.model.NasaResponse
 import com.example.nasa.paging.PagingItem
 import java.util.*
 
@@ -15,7 +15,7 @@ val <T> List<T>.mapToPage: List<PagingItem.Content<T>>
 val List<NasaImageEntity>.mapToModel: List<NasaImage>
     get() = this.map { it.toModel() }
 
-val NasaImagesResponse.mapToModel: List<NasaImage>
+val NasaResponse.mapToModel: List<NasaImage>
     get() = this
         .collection
         .items.map { item ->

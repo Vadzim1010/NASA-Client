@@ -1,6 +1,6 @@
 package com.example.nasa.network
 
-import com.example.nasa.network.model.NasaImagesResponse
+import com.example.nasa.network.model.NasaResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -14,5 +14,10 @@ interface NasaApi {
         @Query("year_start") yearStart: Int,
         @Query("year_end") yearEnd: Int,
         @Query("media_type") mediaType: String = "image",
-    ): NasaImagesResponse
+    ): NasaResponse
+
+    @GET("/search")
+    suspend fun getDescription(
+        @Query("nasa_id") nasaId: String
+    ): NasaResponse
 }

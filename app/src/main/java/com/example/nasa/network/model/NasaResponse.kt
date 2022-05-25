@@ -2,7 +2,7 @@ package com.example.nasa.network.model
 
 import com.google.gson.annotations.SerializedName
 
-data class NasaImagesResponse(
+data class NasaResponse(
     @SerializedName("collection")
     val collection: Collection
 )
