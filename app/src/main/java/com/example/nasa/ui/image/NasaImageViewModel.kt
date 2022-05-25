@@ -22,10 +22,5 @@ class NasaImageViewModel(private val pagingSource: PagingSource) : ViewModel() {
 
     fun getImagesPagingSource(searchParams: SearchParams) = pagingSource
         .getNasaImagePage(searchParams)
-        .shareIn(
-            scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            replay = 1
-        )
 }
 

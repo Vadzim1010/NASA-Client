@@ -4,4 +4,5 @@
     <dimen name="app_corner_radius_small">8dp</dimen>
     <dimen name="app_text_size">20sp</dimen>
     <dimen name="app_padding_small">8dp</dimen>
+    <dimen name="app_text_size_big">30sp</dimen>
 </resources>

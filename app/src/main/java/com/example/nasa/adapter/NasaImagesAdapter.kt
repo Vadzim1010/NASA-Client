@@ -14,7 +14,8 @@ import com.example.nasa.model.NasaImage
 import com.example.nasa.paging.PagingItem
 
 class NasaImagesAdapter(
-    context: Context
+    context: Context,
+    private val onClickListener: (String) -> Unit,
 ) : ListAdapter<PagingItem<NasaImage>, RecyclerView.ViewHolder>(DIF_UTIL) {
 
 
@@ -33,7 +34,8 @@ class NasaImagesAdapter(
         return when (viewType) {
             TYPE_CONTENT -> {
                 NasaImageViewHolder(
-                    ItemNasaImageBinding.inflate(layoutInflater, parent, false)
+                    ItemNasaImageBinding.inflate(layoutInflater, parent, false),
+                    onClickListener,
                 )
             }
             TYPE_LOADING -> {

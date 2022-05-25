@@ -1,10 +1,10 @@
 package com.example.nasa.paging
 
-import com.example.nasa.model.LceState
+import com.example.nasa.utils.Resource
 import com.example.nasa.model.NasaImage
 import com.example.nasa.model.SearchParams
-import com.example.nasa.repository.LocalNasaImagesRepository
-import com.example.nasa.repository.RemoteNasaImagesRepository
+import com.example.nasa.repository.LocalRepository
+import com.example.nasa.repository.RemoteRepository
 import com.example.nasa.utils.LAST_PAGE
 import com.example.nasa.utils.PAGE_LIMIT
 import com.example.nasa.utils.log
@@ -12,8 +12,8 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
 class PagingSource(
-    private val remoteRepository: RemoteNasaImagesRepository,
-    private val localRepository: LocalNasaImagesRepository,
+    private val remoteRepository: RemoteRepository,
+    private val localRepository: LocalRepository,
 ) {
 
 
@@ -71,7 +71,7 @@ class PagingSource(
 
                         log("load network")
 
-                        LceState.Content(currentList, hasMoreToLoad)
+                        Resource.Success(currentList, hasMoreToLoad)
                     },
                     onFailure = { throwable ->
                         val cacheList = localRepository.getImagePage(currentPage, searchParams)
@@ -87,7 +87,7 @@ class PagingSource(
 
                         log("load cache")
 
-                        LceState.Error(currentList, throwable)
+                        Resource.Error(currentList, throwable)
                     }
                 )
         }
@@ -96,16 +96,15 @@ class PagingSource(
             log("isLoading: $isLoading")
         }
         .onStart {
-            emit(LceState.Loading)
+            val cacheList = currentList
+                .takeIf { it.isNotEmpty() } ?: localRepository
+                .getImagePage(currentPage, searchParams)
 
-            val cacheList = localRepository.getImagePage(currentPage, searchParams)
-
-            if (cacheList.isNotEmpty()) {
-                log("load cache")
-                emit(LceState.Content(cacheList, hasMoreToLoad))
-            }
+            log("load cache")
+            emit(Resource.Loading(cacheList))
         }
 }
+
 
 enum class LoadState {
     LOAD_MORE, REFRESH

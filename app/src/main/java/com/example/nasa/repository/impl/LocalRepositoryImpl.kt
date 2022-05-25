@@ -3,13 +3,13 @@ package com.example.nasa.repository.impl
 import com.example.nasa.database.dao.NasaImageDao
 import com.example.nasa.model.NasaImage
 import com.example.nasa.model.SearchParams
-import com.example.nasa.repository.LocalNasaImagesRepository
+import com.example.nasa.repository.LocalRepository
 import com.example.nasa.utils.mapToEntity
 import com.example.nasa.utils.mapToModel
 
-class LocalNasaImagesRepositoryImpl(
+class LocalRepositoryImpl(
     private val nasaImageDao: NasaImageDao,
-) : LocalNasaImagesRepository {
+) : LocalRepository {
 
 
     override suspend fun getImagePage(page: Int, searchParams: SearchParams) = nasaImageDao

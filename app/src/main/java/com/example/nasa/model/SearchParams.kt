@@ -1,7 +1,7 @@
 package com.example.nasa.model
 
 data class SearchParams(
-    val search: String = "",
-    val yearStart: Int = 1920,
-    val yearEnd: Int = 2022,
+    var search: String = "",
+    var yearStart: Int = 1920,
+    var yearEnd: Int = 2022,
 )

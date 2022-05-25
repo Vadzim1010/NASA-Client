@@ -3,7 +3,7 @@ package com.example.nasa.repository
 import com.example.nasa.model.NasaImage
 import com.example.nasa.model.SearchParams
 
-interface LocalNasaImagesRepository {
+interface LocalRepository {
 
     suspend fun getImagePage(page: Int, searchParams: SearchParams): List<NasaImage>
 

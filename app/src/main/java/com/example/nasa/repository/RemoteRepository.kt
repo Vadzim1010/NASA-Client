@@ -3,7 +3,7 @@ package com.example.nasa.repository
 import com.example.nasa.model.NasaImage
 import com.example.nasa.model.SearchParams
 
-interface RemoteNasaImagesRepository {
+interface RemoteRepository {
 
     suspend fun fetchNasaImages(page: Int, searchParams: SearchParams): Result<List<NasaImage>>
 

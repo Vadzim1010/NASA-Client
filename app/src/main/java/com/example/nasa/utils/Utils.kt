@@ -32,3 +32,8 @@ fun List<NasaImage>.mapToEntity(page: Int, searchParams: SearchParams) =
 fun log(message: String) {
     Log.i("TAG", message)
 }
+
+val SearchParams.checkFormat: Boolean
+    get() = this.yearStart in MIN_YEAR until MAX_YEAR &&
+            this.yearEnd in MIN_YEAR + 1..MAX_YEAR &&
+            this.yearStart < this.yearEnd

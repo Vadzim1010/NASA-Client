@@ -9,7 +9,8 @@ import com.example.nasa.model.NasaImage
 import com.example.nasa.paging.PagingItem
 
 class NasaImageViewHolder(
-    private val binding: ItemNasaImageBinding
+    private val binding: ItemNasaImageBinding,
+    private val onClickListener: (String) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(nasaImageItem: PagingItem.Content<NasaImage>) {
@@ -17,6 +18,9 @@ class NasaImageViewHolder(
             nasaImage.load(nasaImageItem.data.imageUrl) {
                 scale(Scale.FILL)
                 size(ViewSizeResolver(root))
+            }
+            card.setOnClickListener {
+                onClickListener(nasaImageItem.data.id)
             }
         }
     }

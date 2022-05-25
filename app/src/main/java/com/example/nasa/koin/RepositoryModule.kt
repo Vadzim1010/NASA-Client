@@ -1,15 +1,15 @@
 package com.example.nasa.koin
 
-import com.example.nasa.repository.impl.LocalNasaImagesRepositoryImpl
-import com.example.nasa.repository.impl.RemoteNasaImagesRepositoryImpl
+import com.example.nasa.repository.impl.LocalRepositoryImpl
+import com.example.nasa.repository.impl.RemoteRepositoryImpl
 import org.koin.dsl.module
 
 val repositoryModule = module {
     single {
-        RemoteNasaImagesRepositoryImpl(get())
+        RemoteRepositoryImpl(get())
     }
 
     single {
-        LocalNasaImagesRepositoryImpl(get())
+        LocalRepositoryImpl(get())
     }
 }

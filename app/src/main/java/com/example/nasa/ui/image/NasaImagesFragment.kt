@@ -4,22 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nasa.R
 import com.example.nasa.adapter.NasaImagesAdapter
 import com.example.nasa.databinding.FragmentNasaImagesBinding
-import com.example.nasa.model.LceState
 import com.example.nasa.model.NasaImage
 import com.example.nasa.model.SearchParams
 import com.example.nasa.paging.PagingItem
-import com.example.nasa.utils.addBottomSpaceDecorationRes
-import com.example.nasa.utils.addScrollListenerFlow
-import com.example.nasa.utils.log
-import com.example.nasa.utils.mapToPage
-import kotlinx.coroutines.flow.debounce
+import com.example.nasa.utils.*
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -32,7 +30,9 @@ class NasaImagesFragment : Fragment() {
     private val viewModel by viewModel<NasaImageViewModel>()
 
     private val nasaImagesAdapter by lazy {
-        NasaImagesAdapter(requireContext())
+        NasaImagesAdapter(requireContext()) {
+            findNavController().navigate(NasaImagesFragmentDirections.toDescription(it))
+        }
     }
 
 
@@ -48,43 +48,55 @@ class NasaImagesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val searchParams = SearchParams()
+
         initRecycler()
         initSwipeRefresh()
-        subscribeOnPagingData()
+        initSearchListener(searchParams)
+        subscribeOnPagingData(searchParams)
         viewModel.onLoadMore()
     }
 
-    private fun subscribeOnPagingData() {
+    private fun subscribeOnPagingData(searchParams: SearchParams) = with(binding) {
         viewModel
-            .getImagesPagingSource(SearchParams())
+            .getImagesPagingSource(searchParams)
             .onEach {
-                if (it != LceState.Loading) {
-                    binding.swipeRefresh.isRefreshing = false
+                if (it !is Resource.Loading) {
+                    swipeRefresh.isRefreshing = false
+                }
+                if (it !is Resource.Loading) {
+                    progressCircular.isVisible = false
                 }
             }
-            .onEach { lceState ->
-                binding.progressCircular.isVisible = lceState == LceState.Loading
-                when (lceState) {
-                    is LceState.Content -> {
+            .onEach {
+                log(searchParams.toString())
+            }
+            .onEach { resource ->
+                when (resource) {
+                    is Resource.Success -> {
                         var networkList: List<PagingItem<NasaImage>>
 
-                        networkList = lceState.data.mapToPage
+                        networkList = resource.data.mapToPage
 
-                        log("content size: ${lceState.data.size}")
+                        log("content size: ${resource.data.size}")
 
-                        if (lceState.hasMoreToLoad) {
-                            networkList = lceState.data.mapToPage + PagingItem.Loading
+                        if (resource.hasMoreToLoad) {
+                            networkList = resource.data.mapToPage + PagingItem.Loading
                         }
 
                         nasaImagesAdapter.submitList(networkList)
                     }
-                    is LceState.Error -> {
-                        val cacheList = lceState.data.mapToPage
+                    is Resource.Error -> {
+                        val cacheList = resource.data.mapToPage
 
                         nasaImagesAdapter.submitList(cacheList)
                     }
-                    LceState.Loading -> {
-                        //no op
+                    is Resource.Loading -> {
+                        val cacheList = resource.data.mapToPage
+
+                        progressCircular.isVisible = cacheList.isEmpty()
+
+                        nasaImagesAdapter.submitList(cacheList)
                     }
                 }
             }
@@ -94,6 +106,8 @@ class NasaImagesFragment : Fragment() {
     private fun initSwipeRefresh() = with(binding) {
         swipeRefresh.setOnRefreshListener {
             viewModel.onRefresh()
+            nasaImagesAdapter.submitList(emptyList())
+            binding.progressCircular.isVisible = true
         }
     }
 
@@ -112,6 +126,55 @@ class NasaImagesFragment : Fragment() {
                 }
                 .launchIn(viewLifecycleOwner.lifecycleScope)
         }
+    }
+
+    private fun initSearchListener(searchParams: SearchParams) = with(binding) {
+        yearStartEditText.onTextChangedListener()
+            .onEach { startYear ->
+                searchParams.yearStart = startYear
+                    ?.toString()
+                    ?.toIntOrNull()
+                    ?.takeIf { it in MIN_YEAR until MAX_YEAR }
+                    ?.also { yearStartEditContainer.error = "" } ?: run {
+                    yearStartEditContainer.error = "incorrect format"
+                    0
+                }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        yearEndEditText.onTextChangedListener()
+            .onEach { endYear ->
+                searchParams.yearEnd = endYear
+                    ?.toString()
+                    ?.toIntOrNull()
+                    ?.takeIf { it in MIN_YEAR + 1..MAX_YEAR }
+                    ?.also { yearEndEditContainer.error = "" } ?: run {
+                    yearEndEditContainer.error = "incorrect format"
+                    0
+                }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        toolbar.onSearchListenerFlow()
+            .onEach {
+                if (!searchParams.checkFormat) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Incorrect format. Please type year in format YYYY",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            .filter { searchParams.checkFormat }
+            .onEach { text ->
+                searchParams.search = text ?: ""
+            }
+            .onEach {
+                viewModel.onRefresh()
+                nasaImagesAdapter.submitList(emptyList())
+                binding.progressCircular.isVisible = true
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onDestroyView() {

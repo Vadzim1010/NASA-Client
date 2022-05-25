@@ -2,13 +2,16 @@ package com.example.nasa.utils
 
 import android.graphics.Rect
 import android.view.View
+import android.widget.EditText
 import androidx.annotation.DimenRes
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.nasa.R
+import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 
@@ -58,12 +61,12 @@ fun Toolbar.onSearchListenerFlow() = callbackFlow {
 
     val queryTextListener = object : SearchView.OnQueryTextListener {
         override fun onQueryTextSubmit(query: String?): Boolean {
-            return false
+            this@callbackFlow.trySend(query)
+            return true
         }
 
         override fun onQueryTextChange(newText: String?): Boolean {
-            this@callbackFlow.trySend(newText)
-            return true
+            return false
         }
     }
 
@@ -74,4 +77,12 @@ fun Toolbar.onSearchListenerFlow() = callbackFlow {
     }
 }
 
+fun EditText.onTextChangedListener() = callbackFlow {
+    val watcher = this@onTextChangedListener.addTextChangedListener { editable ->
+        this.trySend(editable)
+    }
+    this.awaitClose {
+        this@onTextChangedListener.removeTextChangedListener(watcher)
+    }
+}
 

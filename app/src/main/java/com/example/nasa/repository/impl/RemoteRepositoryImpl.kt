@@ -2,13 +2,13 @@ package com.example.nasa.repository.impl
 
 import com.example.nasa.model.SearchParams
 import com.example.nasa.network.NasaApi
-import com.example.nasa.repository.RemoteNasaImagesRepository
+import com.example.nasa.repository.RemoteRepository
 import com.example.nasa.utils.mapToModel
 import kotlinx.coroutines.delay
 
-class RemoteNasaImagesRepositoryImpl(
+class RemoteRepositoryImpl(
     private val nasaApi: NasaApi,
-) : RemoteNasaImagesRepository {
+) : RemoteRepository {
 
     private var contentLength = 0
 
