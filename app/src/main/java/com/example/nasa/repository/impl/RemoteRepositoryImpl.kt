@@ -4,29 +4,31 @@ import com.example.nasa.model.Description
 import com.example.nasa.model.SearchParams
 import com.example.nasa.network.ApiConfig
 import com.example.nasa.network.NasaApi
+import com.example.nasa.network.NasaImagesApi
 import com.example.nasa.repository.RemoteRepository
+import com.example.nasa.utils.log
 import com.example.nasa.utils.mapToModel
 import kotlinx.coroutines.delay
 
 class RemoteRepositoryImpl(
+    private val nasaImagesApi: NasaImagesApi,
     private val nasaApi: NasaApi,
 ) : RemoteRepository {
 
 
     override suspend fun fetchNasaImages(page: Int, searchParams: SearchParams) = runCatching {
         delay(2000) // delay for testing
-        nasaApi.getNasaImages(
+        nasaImagesApi.getNasaImages(
             page = page,
             searchParams = searchParams.search,
             yearStart = searchParams.yearStart,
             yearEnd = searchParams.yearEnd,
-            apiKey = ApiConfig.API_KEY,
         ).mapToModel
     }
 
     override suspend fun fetchDescription(nasaId: String) = runCatching {
         delay(2000) // delay for testing
-        nasaApi.getDescription(nasaId, ApiConfig.API_KEY)
+        nasaImagesApi.getDescription(nasaId)
             .collection
             .items
             .map { item ->

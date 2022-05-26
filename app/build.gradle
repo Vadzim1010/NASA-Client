@@ -60,10 +60,12 @@ dependencies {
     def coil_version = "1.4.0"
     implementation "io.coil-kt:coil:$coil_version"
 
-    //retrofit
+    //network
     def retrofit_version = "2.9.0"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    def okhttp_version = "4.9.3"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
 
     //room
     def roomVersion = "2.4.2"

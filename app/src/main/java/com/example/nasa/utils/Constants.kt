@@ -5,4 +5,5 @@ const val MAX_PAGE = 100
 const val PAGE_SIZE = 100
 const val MAX_YEAR = 2022
 const val MIN_YEAR = 1920
+const val MEDIA_TYPE = "image"
 

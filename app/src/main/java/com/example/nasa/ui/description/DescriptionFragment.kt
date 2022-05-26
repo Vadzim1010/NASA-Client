@@ -13,6 +13,7 @@ import androidx.navigation.ui.setupWithNavController
 import coil.load
 import com.example.nasa.databinding.FragmentDescriptionBinding
 import com.example.nasa.utils.Resource
+import com.example.nasa.utils.log
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch

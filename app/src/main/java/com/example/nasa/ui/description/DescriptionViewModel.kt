@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.shareIn
 
 class DescriptionViewModel(private val remoteRepository: RemoteRepository) : ViewModel() {
 
+
     suspend fun fetchDescription(nasaId: String) = flow<Resource<Description>> {
         remoteRepository
             .fetchDescription(nasaId)
@@ -28,17 +29,4 @@ class DescriptionViewModel(private val remoteRepository: RemoteRepository) : Vie
         .onStart {
             emit(Resource.Loading())
         }
-
-    suspend fun fetchPictureOfDay() = flow<Resource<NasaApodResponse>> {
-        remoteRepository
-            .fetchPictureOfDay()
-            .fold(
-                onSuccess = { emit(Resource.Success(it)) },
-                onFailure = { emit(Resource.Error(throwable = (it))) }
-            )
-    }.shareIn(
-        scope = viewModelScope,
-        started = SharingStarted.Eagerly,
-        replay = 1,
-    )
 }

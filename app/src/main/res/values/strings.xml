@@ -6,4 +6,6 @@
     <string name="end_year">end year</string>
     <string name="min_year">1920</string>
     <string name="max_year">2022</string>
+    <string name="image_of_day">Image of day</string>
+    <string name="search_images">Search images</string>
 </resources>

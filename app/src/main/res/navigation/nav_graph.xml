@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/image_list">
+    app:startDestination="@id/bottom_navigation">
 
     <fragment
-        android:id="@+id/image_list"
-        android:name="com.example.nasa.ui.image.NasaImagesFragment"
-        tools:layout="@layout/fragment_nasa_images">
+        android:id="@+id/bottom_navigation"
+        android:name="com.example.nasa.ui.BottomNavFragment"
+        tools:layout="@layout/fragment_bottom_nav">
 
         <action
             android:id="@+id/to_description"
@@ -19,7 +19,7 @@
     <fragment
         android:id="@+id/description"
         android:name="com.example.nasa.ui.description.DescriptionFragment"
-        tools:layout="@layout/fragment_description" >
+        tools:layout="@layout/fragment_description">
 
         <argument
             android:name="item_id"

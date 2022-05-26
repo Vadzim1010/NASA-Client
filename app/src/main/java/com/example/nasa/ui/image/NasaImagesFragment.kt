@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nasa.R
 import com.example.nasa.adapter.NasaImagesAdapter
 import com.example.nasa.databinding.FragmentNasaImagesBinding
 import com.example.nasa.paging.PagingItem
+import com.example.nasa.ui.navigate
 import com.example.nasa.utils.*
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
@@ -21,15 +21,14 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NasaImagesFragment : Fragment() {
 
-
     private var _binding: FragmentNasaImagesBinding? = null
     private val binding get() = requireNotNull(_binding) { "binding is $_binding" }
 
     private val viewModel by viewModel<NasaImageViewModel>()
 
     private val nasaImagesAdapter by lazy {
-        NasaImagesAdapter(requireContext()) {
-            findNavController().navigate(NasaImagesFragmentDirections.toDescription(it))
+        NasaImagesAdapter(requireContext()) { nasaId ->
+            navigate(nasaId)
         }
     }
 
