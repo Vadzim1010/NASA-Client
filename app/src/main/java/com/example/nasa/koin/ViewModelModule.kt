@@ -17,6 +17,6 @@ val viewModelModule = module {
     }
 
     viewModel {
-        ImageOfDayViewModel()
+        ImageOfDayViewModel(get<RemoteRepositoryImpl>())
     }
 }

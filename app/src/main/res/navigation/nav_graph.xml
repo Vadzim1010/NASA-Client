@@ -12,12 +12,12 @@
 
         <action
             android:id="@+id/to_description"
-            app:destination="@id/description" />
+            app:destination="@id/date" />
 
     </fragment>
 
     <fragment
-        android:id="@+id/description"
+        android:id="@+id/date"
         android:name="com.example.nasa.ui.description.DescriptionFragment"
         tools:layout="@layout/fragment_description">
 

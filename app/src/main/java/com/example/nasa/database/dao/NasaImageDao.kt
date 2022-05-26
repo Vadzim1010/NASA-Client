@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.nasa.database.entity.NasaImageEntity
-import com.example.nasa.model.SearchParams
 
 @Dao
 interface NasaImageDao {

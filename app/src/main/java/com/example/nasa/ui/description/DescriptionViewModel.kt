@@ -3,7 +3,6 @@ package com.example.nasa.ui.description
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nasa.model.Description
-import com.example.nasa.network.model.NasaApodResponse
 import com.example.nasa.repository.RemoteRepository
 import com.example.nasa.utils.Resource
 import kotlinx.coroutines.flow.SharingStarted

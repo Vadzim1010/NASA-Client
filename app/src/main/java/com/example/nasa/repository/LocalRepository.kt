@@ -7,9 +7,5 @@ interface LocalRepository {
 
     suspend fun getImagePage(page: Int, searchParams: SearchParams): List<NasaImage>
 
-    suspend fun insertImagePage(
-        page: Int,
-        searchParams: SearchParams,
-        pageList: List<NasaImage>
-    )
+    suspend fun insertImagePage(page: Int, searchParams: SearchParams, pageList: List<NasaImage>)
 }
