@@ -2,6 +2,7 @@ package com.example.nasa.repository.impl
 
 import com.example.nasa.model.Description
 import com.example.nasa.model.SearchParams
+import com.example.nasa.network.ApiConfig
 import com.example.nasa.network.NasaApi
 import com.example.nasa.repository.RemoteRepository
 import com.example.nasa.utils.mapToModel
@@ -18,13 +19,14 @@ class RemoteRepositoryImpl(
             page = page,
             searchParams = searchParams.search,
             yearStart = searchParams.yearStart,
-            yearEnd = searchParams.yearEnd
+            yearEnd = searchParams.yearEnd,
+            apiKey = ApiConfig.API_KEY,
         ).mapToModel
     }
 
     override suspend fun fetchDescription(nasaId: String) = runCatching {
         delay(2000) // delay for testing
-        nasaApi.getDescription(nasaId)
+        nasaApi.getDescription(nasaId, ApiConfig.API_KEY)
             .collection
             .items
             .map { item ->
@@ -35,5 +37,10 @@ class RemoteRepositoryImpl(
                     imageUrl = item.links.getOrNull(0)?.href ?: "",
                 )
             }.first { it.nasaId.isNotBlank() }
+    }
+
+    override suspend fun fetchPictureOfDay() = runCatching {
+        delay(2000) //delay for testing
+        nasaApi.getPictureOfDay(ApiConfig.API_KEY)
     }
 }

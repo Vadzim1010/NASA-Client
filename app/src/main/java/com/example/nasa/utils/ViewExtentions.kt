@@ -58,6 +58,7 @@ fun RecyclerView.addBottomSpaceDecorationRes(@DimenRes spaceRes: Int) {
 
 fun Toolbar.onSearchListenerFlow() = callbackFlow {
     val searchView = menu.findItem(R.id.search).actionView as SearchView
+    var isSearchStarted = false
 
     val queryTextListener = object : SearchView.OnQueryTextListener {
         override fun onQueryTextSubmit(query: String?): Boolean {
@@ -66,7 +67,12 @@ fun Toolbar.onSearchListenerFlow() = callbackFlow {
         }
 
         override fun onQueryTextChange(newText: String?): Boolean {
-            return false
+            // to not start search with empty query when init search line
+            if (isSearchStarted) {
+                this@callbackFlow.trySend(newText)
+            }
+            isSearchStarted = true
+            return true
         }
     }
 

@@ -3,6 +3,7 @@ package com.example.nasa.ui.description
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nasa.model.Description
+import com.example.nasa.network.model.NasaApodResponse
 import com.example.nasa.repository.RemoteRepository
 import com.example.nasa.utils.Resource
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,4 +28,17 @@ class DescriptionViewModel(private val remoteRepository: RemoteRepository) : Vie
         .onStart {
             emit(Resource.Loading())
         }
+
+    suspend fun fetchPictureOfDay() = flow<Resource<NasaApodResponse>> {
+        remoteRepository
+            .fetchPictureOfDay()
+            .fold(
+                onSuccess = { emit(Resource.Success(it)) },
+                onFailure = { emit(Resource.Error(throwable = (it))) }
+            )
+    }.shareIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        replay = 1,
+    )
 }

@@ -1,15 +1,18 @@
 package com.example.nasa.paging
 
-import com.example.nasa.utils.Resource
 import com.example.nasa.model.NasaImage
 import com.example.nasa.model.SearchParams
 import com.example.nasa.repository.LocalRepository
 import com.example.nasa.repository.RemoteRepository
 import com.example.nasa.utils.MAX_PAGE
 import com.example.nasa.utils.PAGE_SIZE
+import com.example.nasa.utils.Resource
 import com.example.nasa.utils.log
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 
 class PagingSource(
     private val remoteRepository: RemoteRepository,
@@ -20,6 +23,8 @@ class PagingSource(
     private val loadStateFlow = MutableSharedFlow<LoadState>(
         replay = 1, extraBufferCapacity = 0, onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
+
+    private val searchParams = SearchParams()
 
     private var currentList = listOf<NasaImage>()
     private var currentPage = 1
@@ -37,10 +42,13 @@ class PagingSource(
         loadStateFlow.tryEmit(LoadState.REFRESH)
     }
 
-    fun getNasaImagePage(searchParams: SearchParams) = loadStateFlow
+    fun getNasaImagePage() = loadStateFlow
         .onEach {
             isLoading = true
             log("isLoading: $isLoading")
+        }
+        .onEach {
+            log(searchParams.toString())
         }
         .onEach {
             if (it == LoadState.REFRESH) {
@@ -102,6 +110,18 @@ class PagingSource(
             log("load cache")
             emit(Resource.Loading(cacheList))
         }
+
+    fun setStartYear(startYear: Int) {
+        searchParams.yearStart = startYear
+    }
+
+    fun setEndYear(endYear: Int) {
+        searchParams.yearEnd = endYear
+    }
+
+    fun setSearchQuery(searchQuery: String) {
+        searchParams.search = searchQuery
+    }
 }
 
 

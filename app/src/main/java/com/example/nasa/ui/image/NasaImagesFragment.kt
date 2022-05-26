@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -13,15 +12,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nasa.R
 import com.example.nasa.adapter.NasaImagesAdapter
 import com.example.nasa.databinding.FragmentNasaImagesBinding
-import com.example.nasa.model.SearchParams
 import com.example.nasa.paging.PagingItem
 import com.example.nasa.utils.*
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NasaImagesFragment : Fragment() {
+
 
     private var _binding: FragmentNasaImagesBinding? = null
     private val binding get() = requireNotNull(_binding) { "binding is $_binding" }
@@ -33,7 +32,6 @@ class NasaImagesFragment : Fragment() {
             findNavController().navigate(NasaImagesFragmentDirections.toDescription(it))
         }
     }
-    private val searchParams = SearchParams()
 
 
     override fun onCreateView(
@@ -50,17 +48,14 @@ class NasaImagesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
         initSwipeRefresh()
-        initSearchListener(searchParams)
-        subscribeOnPagingData(searchParams)
+        initSearchListener()
+        subscribeOnPagingData()
         viewModel.onLoadMore()
     }
 
-    private fun subscribeOnPagingData(searchParams: SearchParams) = with(binding) {
+    private fun subscribeOnPagingData() = with(binding) {
         viewModel
-            .getImagesPagingSource(searchParams)
-            .onEach {
-                log(searchParams.toString())
-            }
+            .getImagesPagingSource()
             .onEach { resource ->
                 when (resource) {
                     is Resource.Success -> {
@@ -124,10 +119,10 @@ class NasaImagesFragment : Fragment() {
         }
     }
 
-    private fun initSearchListener(searchParams: SearchParams) = with(binding) {
+    private fun initSearchListener() = with(binding) {
         yearStartEditText.onTextChangedListener()
             .onEach { startYear ->
-                searchParams.yearStart = startYear
+                val year = startYear
                     ?.toString()
                     ?.toIntOrNull()
                     ?.takeIf { it in MIN_YEAR until MAX_YEAR }
@@ -135,12 +130,13 @@ class NasaImagesFragment : Fragment() {
                     yearStartEditContainer.error = "incorrect format"
                     0
                 }
+                viewModel.setStartYear(year)
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
         yearEndEditText.onTextChangedListener()
             .onEach { endYear ->
-                searchParams.yearEnd = endYear
+                val year = endYear
                     ?.toString()
                     ?.toIntOrNull()
                     ?.takeIf { it in MIN_YEAR + 1..MAX_YEAR }
@@ -148,22 +144,15 @@ class NasaImagesFragment : Fragment() {
                     yearEndEditContainer.error = "incorrect format"
                     0
                 }
+                viewModel.setEndYear(year)
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
         toolbar.onSearchListenerFlow()
-            .onEach {
-                if (!searchParams.checkFormat) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Incorrect format. Please type year in format YYYY",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-            .filter { searchParams.checkFormat }
+            .debounce(3000)
             .onEach { text ->
-                searchParams.search = text ?: ""
+                val query = text ?: ""
+                viewModel.setSearchQuery(query)
             }
             .onEach {
                 viewModel.onRefresh()

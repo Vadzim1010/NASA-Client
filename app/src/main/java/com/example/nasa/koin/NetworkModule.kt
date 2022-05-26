@@ -1,5 +1,6 @@
 package com.example.nasa.koin
 
+import com.example.nasa.network.ApiConfig
 import com.example.nasa.network.NasaApi
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -9,7 +10,7 @@ import retrofit2.create
 val networkModule = module {
     single {
         Retrofit.Builder()
-            .baseUrl("https://images-api.nasa.gov/")
+            .baseUrl(ApiConfig.ENDPOINT)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
