@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nasa.R
@@ -32,7 +34,6 @@ class NasaImagesFragment : Fragment() {
         }
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -49,7 +50,6 @@ class NasaImagesFragment : Fragment() {
         initSwipeRefresh()
         initSearchListener()
         subscribeOnPagingData()
-        viewModel.onLoadMore()
     }
 
     private fun subscribeOnPagingData() = with(binding) {
@@ -148,7 +148,6 @@ class NasaImagesFragment : Fragment() {
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
         toolbar.onSearchListenerFlow()
-            .debounce(3000)
             .onEach { text ->
                 val query = text ?: ""
                 viewModel.setSearchQuery(query)
@@ -164,5 +163,6 @@ class NasaImagesFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        viewModel.onStopLoading()
     }
 }

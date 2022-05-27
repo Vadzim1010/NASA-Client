@@ -9,10 +9,7 @@ import com.example.nasa.utils.PAGE_SIZE
 import com.example.nasa.utils.Resource
 import com.example.nasa.utils.log
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.*
 
 class PagingSource(
     private val remoteRepository: RemoteRepository,
@@ -42,7 +39,12 @@ class PagingSource(
         loadStateFlow.tryEmit(LoadState.REFRESH)
     }
 
+    fun onStopLoading() {
+        loadStateFlow.tryEmit(LoadState.STOP)
+    }
+
     fun getNasaImagePage() = loadStateFlow
+        .filter { it != LoadState.STOP }
         .onEach {
             isLoading = true
             log("isLoading: $isLoading")
@@ -126,5 +128,5 @@ class PagingSource(
 
 
 enum class LoadState {
-    LOAD_MORE, REFRESH
+    LOAD_MORE, REFRESH, STOP
 }
