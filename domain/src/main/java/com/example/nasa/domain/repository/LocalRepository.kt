@@ -1,17 +1,18 @@
 package com.example.nasa.domain.repository
 
 import com.example.nasa.domain.model.NasaImage
+import kotlinx.coroutines.flow.Flow
 
 
 interface LocalRepository {
 
 
-    suspend fun getImagePage(
+    fun getImagePage(
         page: Int,
         query: String,
         startYear: Int,
         endYear: Int,
-    ): List<NasaImage>
+    ): Flow<List<NasaImage>>
 
     suspend fun insertImagePage(
         page: Int,

@@ -5,6 +5,8 @@ import com.example.nasa.data.util.mapToEntity
 import com.example.nasa.data.util.mapToModel
 import com.example.nasa.domain.model.NasaImage
 import com.example.nasa.domain.repository.LocalRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 internal class LocalRepositoryImpl(
     private val nasaImageDao: NasaImageDao,
@@ -16,14 +18,14 @@ internal class LocalRepositoryImpl(
         query: String,
         startYear: Int,
         endYear: Int
-    ): List<NasaImage> = nasaImageDao
+    ): Flow<List<NasaImage>> = nasaImageDao
         .getImagesPage(
             page = page,
             search = query,
             yearStart = startYear,
             yearEnd = endYear,
         )
-        .mapToModel
+        .map { it.mapToModel }
 
     override suspend fun insertImagePage(
         page: Int,

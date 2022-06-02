@@ -97,7 +97,7 @@ class PagingSource(
                             query = searchParams.searchQuery,
                             startYear = searchParams.yearStart,
                             endYear = searchParams.yearEnd,
-                        )
+                        ).first()
 
                         isLastPage = false
                         if (cacheList.size < PAGE_SIZE || currentPage == MAX_PAGE) {
@@ -125,7 +125,7 @@ class PagingSource(
                 query = searchParams.searchQuery,
                 startYear = searchParams.yearStart,
                 endYear = searchParams.yearEnd,
-            )
+            ).first()
 
             log("load cache")
             emit(Resource.Loading(cacheList))

@@ -5,6 +5,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.nasa.data.database.entity.NasaImageEntity
+import kotlinx.coroutines.flow.Flow
+
 
 @Dao
 internal interface NasaImageDao {
@@ -17,12 +19,12 @@ internal interface NasaImageDao {
                 "AND (:yearStart) = year_start " +
                 "AND (:yearEnd) = year_end;"
     )
-    suspend fun getImagesPage(
+    fun getImagesPage(
         page: Int,
         search: String,
         yearStart: Int,
         yearEnd: Int
-    ): List<NasaImageEntity>
+    ): Flow<List<NasaImageEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertImagePage(imagePage: List<NasaImageEntity>)
