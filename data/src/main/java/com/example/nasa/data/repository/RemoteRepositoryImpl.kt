@@ -7,7 +7,7 @@ import com.example.nasa.data.network.NasaImagesApi
 import com.example.nasa.data.util.mapToModel
 import com.example.nasa.domain.model.Description
 import com.example.nasa.domain.model.NasaImage
-import com.example.nasa.domain.model.PictureOfDay
+import com.example.nasa.domain.model.Apod
 import com.example.nasa.domain.repository.RemoteRepository
 import kotlinx.coroutines.delay
 
@@ -51,7 +51,7 @@ internal class RemoteRepositoryImpl(
     override suspend fun fetchPictureOfDay() = runCatching {
         delay(2000) //delay for testing
         val response = nasaApi.getPictureOfDay(ApiConfig.API_KEY)
-        PictureOfDay(
+        Apod(
             title = response.title,
             date = response.date,
             imageUrl = response.url

@@ -1,4 +1,4 @@
-package com.example.nasa.ui.day
+package com.example.nasa.ui.apod
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,19 +8,19 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import coil.load
-import com.example.nasa.domain.model.Resource
 import com.example.nasa.databinding.FragmentPictureOfDayBinding
+import com.example.nasa.domain.model.Resource
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class ImageOfDayFragment : Fragment() {
+class ApodFragment : Fragment() {
 
     private var _binding: FragmentPictureOfDayBinding? = null
     private val binding get() = requireNotNull(_binding) { "binding is $_binding" }
 
-    private val viewModel by viewModel<ImageOfDayViewModel>()
+    private val viewModel by viewModel<ApodViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/image_of_day"
-        android:name="com.example.nasa.ui.day.ImageOfDayFragment"
+        android:name="com.example.nasa.ui.apod.ApodFragment"
         tools:layout="@layout/fragment_picture_of_day" />
 
     <fragment

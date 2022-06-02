@@ -2,7 +2,7 @@ package com.example.nasa.domain.repository
 
 import com.example.nasa.domain.model.Description
 import com.example.nasa.domain.model.NasaImage
-import com.example.nasa.domain.model.PictureOfDay
+import com.example.nasa.domain.model.Apod
 
 interface RemoteRepository {
 
@@ -16,5 +16,5 @@ interface RemoteRepository {
 
     suspend fun fetchDescription(nasaId: String): Result<Description>
 
-    suspend fun fetchPictureOfDay(): Result<PictureOfDay>
+    suspend fun fetchPictureOfDay(): Result<Apod>
 }

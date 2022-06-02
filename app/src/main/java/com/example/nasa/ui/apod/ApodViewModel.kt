@@ -1,18 +1,18 @@
-package com.example.nasa.ui.day
+package com.example.nasa.ui.apod
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nasa.domain.model.Resource
-import com.example.nasa.domain.repository.RemoteRepository
+import com.example.nasa.domain.usecase.GetApodUseCase
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 
-class ImageOfDayViewModel(private val remoteRepository: RemoteRepository) : ViewModel() {
+class ApodViewModel(private val getApodUseCase: GetApodUseCase) : ViewModel() {
 
     fun fetchPictureOfDay() = flow {
-        val resource = remoteRepository.fetchPictureOfDay()
+        val resource = getApodUseCase()
             .fold(
                 onSuccess = { Resource.Success(it) },
                 onFailure = { Resource.Error(throwable = it) }
