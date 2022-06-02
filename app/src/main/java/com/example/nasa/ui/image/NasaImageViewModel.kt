@@ -1,15 +1,16 @@
 package com.example.nasa.ui.image
 
 import androidx.lifecycle.ViewModel
-import com.example.nasa.data.paging.PagingSource
+import com.example.nasa.domain.paging.PagingSource
 
 
 class NasaImageViewModel(private val pagingSource: PagingSource) : ViewModel() {
 
 
     init {
-        onLoadMore()
+        pagingSource.onLoadMore()
     }
+
 
     fun onStopLoading() {
         pagingSource.onStopLoading()
@@ -23,8 +24,8 @@ class NasaImageViewModel(private val pagingSource: PagingSource) : ViewModel() {
         pagingSource.onLoadMore()
     }
 
-    fun getImagesPagingSource() = pagingSource
-        .getNasaImagePage()
+    fun getImagesPagingSource() = pagingSource.getNasaImagePage()
+
 
     fun setStartYear(yearStart: Int) {
         pagingSource.setStartYear(yearStart)

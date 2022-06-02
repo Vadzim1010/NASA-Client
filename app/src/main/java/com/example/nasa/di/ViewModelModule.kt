@@ -1,4 +1,4 @@
-package com.example.nasa.koin
+package com.example.nasa.di
 
 import com.example.nasa.ui.day.ImageOfDayViewModel
 import com.example.nasa.ui.description.DescriptionViewModel

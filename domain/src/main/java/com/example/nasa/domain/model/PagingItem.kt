@@ -1,4 +1,4 @@
-package com.example.nasa.model
+package com.example.nasa.domain.model
 
 sealed class PagingItem<out T> {
 

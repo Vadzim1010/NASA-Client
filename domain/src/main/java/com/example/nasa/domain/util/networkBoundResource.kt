@@ -1,27 +1,25 @@
 package com.example.nasa.domain.util
 
-import com.example.nasa.domain.model.NasaImage
+
 import com.example.nasa.domain.model.Resource
 import kotlinx.coroutines.flow.*
 
 
 inline fun <ResultType, RequestType> networkBoundResource(
     crossinline query: () -> Flow<ResultType>,
-    crossinline fetch: suspend () -> RequestType,
+    crossinline fetch: suspend () -> Result<RequestType>,
     crossinline saveFetchResult: suspend (RequestType) -> Unit,
     crossinline shouldFetch: (ResultType) -> Boolean = { true },
-    crossinline onFetchSuccess: () -> Unit = { },
-    crossinline onFetchFailed: (Throwable) -> Unit = { },
 ) = flow {
     val data = query().first()
 
     val flow = if (shouldFetch(data)) {
         emit(Resource.Loading(data))
 
-        runCatching() { saveFetchResult(fetch()) }
+        fetch()
             .fold(
-                onSuccess = {
-                    onFetchSuccess()
+                onSuccess = { result ->
+                    saveFetchResult(result)
                     query().map { Resource.Success(it) }
                 },
                 onFailure = { throwable ->

@@ -14,8 +14,8 @@ import com.example.nasa.data.util.MAX_YEAR
 import com.example.nasa.data.util.MIN_YEAR
 import com.example.nasa.data.util.log
 import com.example.nasa.databinding.FragmentNasaImagesBinding
-import com.example.nasa.domain.model.Resource
-import com.example.nasa.model.PagingItem
+import com.example.nasa.domain.model.LceState
+import com.example.nasa.domain.model.PagingItem
 import com.example.nasa.ui.navigate
 import com.example.nasa.utils.*
 import kotlinx.coroutines.flow.launchIn
@@ -58,37 +58,38 @@ class NasaImagesFragment : Fragment() {
             .getImagesPagingSource()
             .onEach { resource ->
                 when (resource) {
-                    is Resource.Success -> {
-                        log("content size: ${resource.data?.size}")
+                    is LceState.Content -> {
+                        progressCircular.isVisible = false
+                        swipeRefresh.isRefreshing = false
+
+                        log("content size: ${resource.data.size}")
 
                         val networkList = if (!resource.hasMoreData) {
-                            resource.data?.mapToPage?.plus(PagingItem.Loading)
+                            resource.data.mapToPage.plus(PagingItem.Loading)
                         } else {
-                            resource.data?.mapToPage
+                            resource.data.mapToPage
                         }
 
                         nasaImagesAdapter.submitList(networkList)
                     }
-                    is Resource.Error -> {
+                    is LceState.Error -> {
+                        progressCircular.isVisible = false
+                        swipeRefresh.isRefreshing = false
+
                         val cacheList = resource.data?.mapToPage
 
                         nasaImagesAdapter.submitList(cacheList)
                     }
-                    is Resource.Loading -> {
-                        val cacheList = resource.data?.mapToPage
+                    is LceState.Loading -> {
+                        val cacheList = resource.data?.mapToPage ?: emptyList()
 
-                        progressCircular.isVisible = cacheList?.isNullOrEmpty() ?: false
+                        progressCircular.isVisible = cacheList.isNullOrEmpty()
+                        swipeRefresh.isRefreshing = cacheList.isNullOrEmpty()
 
-                        nasaImagesAdapter.submitList(cacheList)
+                        if (!cacheList.isNullOrEmpty()) {
+                            nasaImagesAdapter.submitList(cacheList)
+                        }
                     }
-                }
-            }
-            .onEach {
-                if (it !is Resource.Loading) {
-                    swipeRefresh.isRefreshing = false
-                }
-                if (it !is Resource.Loading) {
-                    progressCircular.isVisible = false
                 }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)

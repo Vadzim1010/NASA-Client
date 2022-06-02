@@ -1,14 +1,11 @@
 package com.example.nasa.domain.model
 
 
-sealed class Resource<T>(
-    val data: T? = null,
-    val error: Throwable? = null
-) {
+sealed class Resource<T>() {
 
-    class Success<T>(data: T, val hasMoreData: Boolean = true) : Resource<T>(data)
+    data class Success<T>(val data: T, val hasMoreData: Boolean = true) : Resource<T>()
 
-    class Loading<T>(data: T? = null) : Resource<T>(data)
+    data class Loading<T>(val data: T? = null) : Resource<T>()
 
-    class Error<T>(throwable: Throwable, data: T? = null) : Resource<T>(data, throwable)
+    data class Error<T>(val throwable: Throwable, val data: T? = null) : Resource<T>()
 }

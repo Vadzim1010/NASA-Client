@@ -6,7 +6,7 @@ import coil.size.Scale
 import coil.size.ViewSizeResolver
 import com.example.nasa.databinding.ItemNasaImageBinding
 import com.example.nasa.domain.model.NasaImage
-import com.example.nasa.model.PagingItem
+import com.example.nasa.domain.model.PagingItem
 
 class NasaImageViewHolder(
     private val binding: ItemNasaImageBinding,

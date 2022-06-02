@@ -13,7 +13,7 @@ internal class LocalRepositoryImpl(
 ) : LocalRepository {
 
 
-    override suspend fun getImagePage(
+    override fun getImagePage(
         page: Int,
         query: String,
         startYear: Int,

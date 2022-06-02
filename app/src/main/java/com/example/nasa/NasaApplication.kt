@@ -1,8 +1,8 @@
 package com.example.nasa
 
 import android.app.Application
-import com.example.nasa.data.di.*
-import com.example.nasa.koin.viewModelModule
+import com.example.nasa.data.di.dataModule
+import com.example.nasa.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 

@@ -3,8 +3,8 @@ package com.example.nasa.data.util
 import android.util.Log
 import com.example.nasa.data.database.entity.NasaImageEntity
 import com.example.nasa.data.model.SearchParams
-import com.example.nasa.domain.model.NasaImage
 import com.example.nasa.data.network.NasaResponse
+import com.example.nasa.domain.model.NasaImage
 import java.util.*
 
 
@@ -40,11 +40,5 @@ internal fun List<NasaImage>.mapToEntity(
     }
 
 fun log(message: String) {
-    Log.i("TAG", message)
+    Log.i("ProjectNasa", message)
 }
-
-
-internal val SearchParams.checkFormat: Boolean
-    get() = this.yearStart in MIN_YEAR until MAX_YEAR &&
-            this.yearEnd in MIN_YEAR + 1..MAX_YEAR &&
-            this.yearStart < this.yearEnd
