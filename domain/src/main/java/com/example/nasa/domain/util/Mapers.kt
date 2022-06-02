@@ -1,4 +1,4 @@
-package com.example.nasa.utils
+package com.example.nasa.domain.util
 
 import com.example.nasa.domain.model.PagingItem
 

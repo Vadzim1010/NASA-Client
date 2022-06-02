@@ -16,8 +16,12 @@ import com.example.nasa.data.util.log
 import com.example.nasa.databinding.FragmentNasaImagesBinding
 import com.example.nasa.domain.model.LceState
 import com.example.nasa.domain.model.PagingItem
+import com.example.nasa.domain.util.mapToPage
 import com.example.nasa.ui.navigate
-import com.example.nasa.utils.*
+import com.example.nasa.utils.addBottomSpaceDecorationRes
+import com.example.nasa.utils.addScrollListenerFlow
+import com.example.nasa.utils.onSearchListenerFlow
+import com.example.nasa.utils.onTextChangedListener
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
