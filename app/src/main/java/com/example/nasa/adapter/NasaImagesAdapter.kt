@@ -10,8 +10,8 @@ import com.example.nasa.adapter.holder.LoadingViewHolder
 import com.example.nasa.adapter.holder.NasaImageViewHolder
 import com.example.nasa.databinding.ItemLoadingBinding
 import com.example.nasa.databinding.ItemNasaImageBinding
-import com.example.nasa.model.NasaImage
-import com.example.nasa.paging.PagingItem
+import com.example.nasa.domain.model.NasaImage
+import com.example.nasa.model.PagingItem
 
 class NasaImagesAdapter(
     context: Context,

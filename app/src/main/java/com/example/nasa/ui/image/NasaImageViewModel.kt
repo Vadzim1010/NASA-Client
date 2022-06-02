@@ -1,10 +1,8 @@
 package com.example.nasa.ui.image
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.nasa.paging.PagingSource
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.shareIn
+import com.example.nasa.data.paging.PagingSource
+
 
 class NasaImageViewModel(private val pagingSource: PagingSource) : ViewModel() {
 

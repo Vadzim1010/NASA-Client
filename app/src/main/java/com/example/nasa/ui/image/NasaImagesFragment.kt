@@ -6,17 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nasa.R
 import com.example.nasa.adapter.NasaImagesAdapter
+import com.example.nasa.data.util.MAX_YEAR
+import com.example.nasa.data.util.MIN_YEAR
+import com.example.nasa.data.util.log
 import com.example.nasa.databinding.FragmentNasaImagesBinding
-import com.example.nasa.paging.PagingItem
+import com.example.nasa.domain.model.Resource
+import com.example.nasa.model.PagingItem
 import com.example.nasa.ui.navigate
 import com.example.nasa.utils.*
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -58,12 +59,12 @@ class NasaImagesFragment : Fragment() {
             .onEach { resource ->
                 when (resource) {
                     is Resource.Success -> {
-                        log("content size: ${resource.data.size}")
+                        log("content size: ${resource.data?.size}")
 
-                        val networkList = if (!resource.isLastPage) {
-                            resource.data.mapToPage + PagingItem.Loading
+                        val networkList = if (!resource.hasMoreData) {
+                            resource.data?.mapToPage?.plus(PagingItem.Loading)
                         } else {
-                            resource.data.mapToPage
+                            resource.data?.mapToPage
                         }
 
                         nasaImagesAdapter.submitList(networkList)

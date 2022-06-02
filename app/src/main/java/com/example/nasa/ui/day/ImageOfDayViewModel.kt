@@ -2,8 +2,8 @@ package com.example.nasa.ui.day
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.nasa.repository.RemoteRepository
-import com.example.nasa.utils.Resource
+import com.example.nasa.domain.model.Resource
+import com.example.nasa.domain.repository.RemoteRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart

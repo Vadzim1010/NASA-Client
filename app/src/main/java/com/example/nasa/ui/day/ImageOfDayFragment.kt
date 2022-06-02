@@ -8,8 +8,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import coil.load
+import com.example.nasa.domain.model.Resource
 import com.example.nasa.databinding.FragmentPictureOfDayBinding
-import com.example.nasa.utils.Resource
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -40,9 +40,9 @@ class ImageOfDayFragment : Fragment() {
                 .onEach { resource ->
                     when (resource) {
                         is Resource.Success -> {
-                            image.load(resource.data.imageUrl)
-                            title.text = resource.data.title
-                            date.text = resource.data.date
+                            image.load(resource.data?.imageUrl)
+                            title.text = resource.data?.title
+                            date.text = resource.data?.date
                         }
                         is Resource.Error -> {
 
