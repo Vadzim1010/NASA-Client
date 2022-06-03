@@ -40,15 +40,29 @@ class ApodFragment : Fragment() {
                 .onEach { resource ->
                     when (resource) {
                         is Resource.Success -> {
-                            image.load(resource.data?.imageUrl)
-                            title.text = resource.data?.title
-                            date.text = resource.data?.date
+                            progressCircular.isVisible = false
+
+                            image.load(resource.data.first().imageUrl)
+                            title.text = resource.data.first().title
+                            date.text = resource.data.first().date
                         }
                         is Resource.Error -> {
+                            progressCircular.isVisible = false
 
+                            if (!resource.data.isNullOrEmpty()) {
+                                image.load(resource.data?.first()?.imageUrl)
+                                title.text = resource.data?.first()?.title
+                                date.text = resource.data?.first()?.date
+                            }
                         }
                         is Resource.Loading -> {
-                            progressCircular.isVisible = true
+                            progressCircular.isVisible = resource.data.isNullOrEmpty()
+
+                            if (!resource.data.isNullOrEmpty()) {
+                                image.load(resource.data?.first()?.imageUrl)
+                                title.text = resource.data?.first()?.title
+                                date.text = resource.data?.first()?.date
+                            }
                         }
                     }
                 }

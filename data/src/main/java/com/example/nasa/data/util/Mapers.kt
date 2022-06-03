@@ -1,6 +1,7 @@
 package com.example.nasa.data.util
 
 import android.util.Log
+import com.example.nasa.data.database.entity.ApodEntity
 import com.example.nasa.data.database.entity.DescriptionEntity
 import com.example.nasa.data.database.entity.ImageDescriptionEntity
 import com.example.nasa.data.database.entity.NasaImageEntity
@@ -21,6 +22,9 @@ internal val Flow<List<NasaImageEntity>>.mapToDomain: Flow<List<NasaImage>>
 
 
 internal val Flow<List<ImageDescriptionEntity>>.mapDescToDomain: Flow<List<Description>>
+    get() = this.map { list -> list.map { it.toDomain() } }
+
+internal val Flow<List<ApodEntity>>.mapApodToDomain: Flow<List<Apod>>
     get() = this.map { list -> list.map { it.toDomain() } }
 
 
@@ -64,6 +68,13 @@ internal val Description.toEntity: DescriptionEntity
         title = this.title,
         description = this.description,
         imageUrl = this.imageUrl
+    )
+
+internal val Apod.toEntity: ApodEntity
+    get() = ApodEntity(
+        title = this.title,
+        date = this.date,
+        imageUrl = this.imageUrl,
     )
 
 

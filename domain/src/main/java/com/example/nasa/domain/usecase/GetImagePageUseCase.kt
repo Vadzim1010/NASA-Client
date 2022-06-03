@@ -14,7 +14,7 @@ class GetImagePageUseCase(
 ) {
 
 
-    suspend operator fun invoke(
+    operator fun invoke(
         page: Int,
         query: String,
         startYear: Int,

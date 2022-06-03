@@ -132,7 +132,7 @@ class NasaImagesFragment : Fragment() {
 
                             progressCircular.isVisible = cacheList.isNullOrEmpty()
 
-                            if (!cacheList.isNullOrEmpty()) {
+                            if (cacheList.size > nasaImagesAdapter.currentList.size) {
                                 nasaImagesAdapter.submitList(cacheList)
                             }
                         }

@@ -21,6 +21,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DescriptionFragment : Fragment() {
 
+
     private var _binding: FragmentDescriptionBinding? = null
     private val binding get() = requireNotNull(_binding) { "binding is $_binding" }
 
@@ -45,33 +46,39 @@ class DescriptionFragment : Fragment() {
 
         with(binding) {
             toolbar.setupWithNavController(findNavController())
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.fetchDescription(nasaId)
-                    .onEach { resource ->
-                        when (resource) {
-                            is Resource.Success -> {
-                                progressCircular.isVisible = false
-                                image.load(resource.data.first().imageUrl)
-                                title.text = resource.data.first().title
-                                description.text = resource.data.first().description
-                            }
-                            is Resource.Error -> {
-                                progressCircular.isVisible = false
+            viewModel.fetchDescription(nasaId)
+                .onEach { resource ->
+                    when (resource) {
+                        is Resource.Success -> {
+                            progressCircular.isVisible = false
+
+                            image.load(resource.data.first().imageUrl)
+                            title.text = resource.data.first().title
+                            description.text = resource.data.first().description
+                        }
+                        is Resource.Error -> {
+                            progressCircular.isVisible = false
+
+                            if (!resource.data.isNullOrEmpty()) {
                                 image.load(resource.data?.first()?.imageUrl)
                                 title.text = resource.data?.first()?.title
                                 description.text = resource.data?.first()?.description
-                                showToast(resource.throwable.message)
                             }
-                            is Resource.Loading -> {
-                                progressCircular.isVisible = resource.data?.first()?.description?.isEmpty() ?: false
+                            showToast(resource.throwable.message)
+                        }
+                        is Resource.Loading -> {
+                            progressCircular.isVisible =
+                                resource.data?.first()?.description.isNullOrEmpty()
+
+                            if (!resource.data.isNullOrEmpty()) {
                                 image.load(resource.data?.first()?.imageUrl)
                                 title.text = resource.data?.first()?.title
                                 description.text = resource.data?.first()?.description
                             }
                         }
                     }
-                    .launchIn(viewLifecycleOwner.lifecycleScope)
-            }
+                }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
         }
     }
 

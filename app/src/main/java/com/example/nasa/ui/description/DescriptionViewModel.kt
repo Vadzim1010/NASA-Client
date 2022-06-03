@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.shareIn
 class DescriptionViewModel(private val getDescriptionUseCase: GetDescriptionUseCase) : ViewModel() {
 
 
-    suspend fun fetchDescription(nasaId: String) =
+    fun fetchDescription(nasaId: String) =
         getDescriptionUseCase(nasaId)
             .shareIn(
                 scope = viewModelScope,

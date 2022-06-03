@@ -11,10 +11,18 @@ class GetDescriptionUseCase(
     private val remoteRepository: RemoteDescRepository,
     private val localDescRepository: LocalDescRepository
 ) {
-    suspend operator fun invoke(nasaId: String): Flow<Resource<List<Description>>> =
+
+
+    operator fun invoke(nasaId: String): Flow<Resource<List<Description>>> =
         networkBoundResource(
-            query = { localDescRepository.getDescription(id = nasaId) },
-            fetch = { remoteRepository.fetchDescription(nasaId = nasaId) },
-            saveFetchResult = { localDescRepository.insertDescription(it) }
+            query = {
+                localDescRepository.getDescription(id = nasaId)
+            },
+            fetch = {
+                remoteRepository.fetchDescription(nasaId = nasaId)
+            },
+            saveFetchResult = {
+                localDescRepository.insertDescription(it)
+            }
         )
 }
