@@ -19,10 +19,13 @@ data class NasaImageEntity(
     val yearStart: Int,
     @ColumnInfo(name = "year_end")
     val yearEnd: Int,
+    @ColumnInfo(name = "total_hits")
+    val totalHits: Int
 ) {
 
     fun toDomain() = NasaImage(
         id = id,
         imageUrl = imageUrl,
+        totalHits = totalHits,
     )
 }

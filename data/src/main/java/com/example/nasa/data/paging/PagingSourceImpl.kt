@@ -2,7 +2,6 @@ package com.example.nasa.data.paging
 
 import com.example.nasa.data.model.LoadState
 import com.example.nasa.data.util.log
-import com.example.nasa.domain.model.LceState
 import com.example.nasa.domain.model.NasaImage
 import com.example.nasa.domain.model.Resource
 import com.example.nasa.domain.paging.PagingSource
@@ -23,8 +22,7 @@ internal class PagingSourceImpl(
     )
 
 
-    private var currentList = listOf<NasaImage>()
-    private var cacheSize = 0
+    private var currentCacheList = listOf<NasaImage>()
     private var currentPage = 1
     private var isLoading = false
     private var isLastPage = false
@@ -56,11 +54,11 @@ internal class PagingSourceImpl(
         loadStateFlow.tryEmit(LoadState.Stop)
     }
 
-    override fun getNasaImagePage(): Flow<LceState<List<NasaImage>>> = loadStateFlow
+    override fun getNasaImagePage(): Flow<Resource<List<NasaImage>>> = loadStateFlow
         .filter { it != LoadState.Stop }
         .flatMapLatest { loadState ->
             if (loadState is LoadState.Refresh) {
-                currentList = emptyList()
+                currentCacheList = emptyList()
                 currentPage = 1
             }
 
@@ -80,13 +78,14 @@ internal class PagingSourceImpl(
         .onEach {
             log("page $currentPage")
         }
-        .map { resource ->
+        .onEach { resource ->
             when (resource) {
                 is Resource.Success -> {
-                    currentList = currentList.dropLast(cacheSize) + resource.data
+                    currentCacheList = emptyList()
+                    currentCacheList = resource.data
 
                     isLastPage = false
-                    if (resource.data.size < PAGE_SIZE || currentPage == MAX_PAGE) {
+                    if (resource.data.size < PAGE_SIZE * currentPage || currentPage == MAX_PAGE) {
                         isLastPage = true
                     } else {
                         currentPage++
@@ -95,16 +94,15 @@ internal class PagingSourceImpl(
                     isLoading = false
                     log("isLoading: $isLoading")
                     log("load internet success")
-
-                    LceState.Content(data = currentList, hasMoreData = isLastPage)
                 }
                 is Resource.Error -> {
+                    currentCacheList = emptyList()
+                    currentCacheList = resource.data ?: emptyList()
+
                     val cacheList = resource.data ?: emptyList()
 
-                    currentList = currentList.dropLast(cacheSize) + cacheList
-
                     isLastPage = false
-                    if (cacheList.size < PAGE_SIZE || currentPage == MAX_PAGE) {
+                    if (cacheList.size < PAGE_SIZE * currentPage || currentPage == MAX_PAGE) {
                         isLastPage = true
                     } else {
                         currentPage++
@@ -113,21 +111,16 @@ internal class PagingSourceImpl(
                     isLoading = false
                     log("isLoading: $isLoading")
                     log("load internet success")
-
-                    LceState.Error(throwable = resource.throwable, data = currentList)
                 }
                 is Resource.Loading -> {
-                    val cacheList = resource.data ?: emptyList()
-                    currentList = currentList + cacheList
-
-                    cacheSize = resource.data?.size ?: 0
+                    currentCacheList = emptyList()
+                    currentCacheList = resource.data ?: emptyList()
 
                     log("load cache")
-                    LceState.Loading(currentList)
                 }
             }
         }
         .onStart {
-            emit(LceState.Loading(currentList))
+            emit(Resource.Loading(currentCacheList))
         }
 }

@@ -5,6 +5,7 @@ import com.example.nasa.data.util.mapToDomain
 import com.example.nasa.data.util.mapToEntity
 import com.example.nasa.domain.model.NasaImage
 import com.example.nasa.domain.repository.LocalImagesRepository
+import com.example.nasa.domain.util.PAGE_SIZE
 import kotlinx.coroutines.flow.Flow
 
 internal class LocalImagesRepositoryImpl(
@@ -18,7 +19,12 @@ internal class LocalImagesRepositoryImpl(
         startYear: Int,
         endYear: Int
     ): Flow<List<NasaImage>> = nasaImageDao
-        .getImagesPage(page = page, search = query, yearStart = startYear, yearEnd = endYear)
+        .getImagesPage(
+            limit = (page * PAGE_SIZE),
+            search = query,
+            yearStart = startYear,
+            yearEnd = endYear
+        )
         .mapToDomain
 
     override suspend fun insertImagePage(

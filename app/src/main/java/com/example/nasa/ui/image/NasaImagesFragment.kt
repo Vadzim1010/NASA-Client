@@ -10,12 +10,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nasa.R
 import com.example.nasa.adapter.NasaImagesAdapter
-import com.example.nasa.domain.util.MAX_YEAR
-import com.example.nasa.domain.util.MIN_YEAR
 import com.example.nasa.data.util.log
 import com.example.nasa.databinding.FragmentNasaImagesBinding
-import com.example.nasa.domain.model.LceState
 import com.example.nasa.domain.model.PagingItem
+import com.example.nasa.domain.model.Resource
+import com.example.nasa.domain.util.DEFAULT_SEARCH_QUERY
+import com.example.nasa.domain.util.MAX_YEAR
+import com.example.nasa.domain.util.MIN_YEAR
 import com.example.nasa.domain.util.mapToPage
 import com.example.nasa.ui.navigate
 import com.example.nasa.utils.addBottomSpaceDecorationRes
@@ -39,6 +40,9 @@ class NasaImagesFragment : Fragment() {
             navigate(nasaId)
         }
     }
+    private var startYear = MIN_YEAR
+    private var endYear = MAX_YEAR
+    private var searchQuery = DEFAULT_SEARCH_QUERY
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,10 +56,6 @@ class NasaImagesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var startYear = 1920
-        var endYear = 2022
-        var searchQuery = ""
-
         with(binding) {
             yearStartEditText.onTextChangedListener()
                 .onEach { year ->
@@ -94,8 +94,8 @@ class NasaImagesFragment : Fragment() {
                 .launchIn(viewLifecycleOwner.lifecycleScope)
         }
 
-        initRecycler(searchQuery, startYear, endYear)
-        initSwipeRefresh(searchQuery, startYear, endYear)
+        initRecycler()
+        initSwipeRefresh()
         subscribeOnPagingData()
     }
 
@@ -105,21 +105,26 @@ class NasaImagesFragment : Fragment() {
                 .getImagesPagingSource()
                 .onEach { resource ->
                     when (resource) {
-                        is LceState.Content -> {
+                        is Resource.Success -> {
                             progressCircular.isVisible = false
                             swipeRefresh.isRefreshing = false
 
                             log("content size: ${resource.data.size}")
 
-                            val networkList = if (!resource.hasMoreData) {
-                                resource.data.mapToPage.plus(PagingItem.Loading)
-                            } else {
-                                resource.data.mapToPage
-                            }
+                            val totalHits = resource.data.lastOrNull()?.totalHits ?: 0
+
+                            log("total content length: $totalHits")
+
+                            val networkList =
+                                if (totalHits > resource.data.size) {
+                                    resource.data.mapToPage.plus(PagingItem.Loading)
+                                } else {
+                                    resource.data.mapToPage
+                                }
 
                             nasaImagesAdapter.submitList(networkList)
                         }
-                        is LceState.Error -> {
+                        is Resource.Error -> {
                             progressCircular.isVisible = false
                             swipeRefresh.isRefreshing = false
 
@@ -127,7 +132,7 @@ class NasaImagesFragment : Fragment() {
 
                             nasaImagesAdapter.submitList(cacheList)
                         }
-                        is LceState.Loading -> {
+                        is Resource.Loading -> {
                             val cacheList = resource.data?.mapToPage ?: emptyList()
 
                             progressCircular.isVisible = cacheList.isNullOrEmpty()
@@ -141,16 +146,16 @@ class NasaImagesFragment : Fragment() {
                 .launchIn(viewLifecycleOwner.lifecycleScope)
         }
 
-    private fun initSwipeRefresh(searchQuery: String, yearStart: Int, yearEnd: Int) =
+    private fun initSwipeRefresh() =
         with(binding) {
             swipeRefresh.setOnRefreshListener {
-                viewModel.onRefresh(searchQuery, yearStart, yearEnd)
+                viewModel.onRefresh(searchQuery, startYear, endYear)
                 nasaImagesAdapter.submitList(emptyList())
                 binding.progressCircular.isVisible = true
             }
         }
 
-    private fun initRecycler(searchQuery: String, yearStart: Int, yearEnd: Int) = with(binding) {
+    private fun initRecycler() = with(binding) {
         val manager = LinearLayoutManager(requireContext())
         recycler.apply {
             layoutManager = manager
@@ -161,7 +166,7 @@ class NasaImagesFragment : Fragment() {
                 itemsToLoad = 30,
             )
                 .onEach {
-                    viewModel.onLoadMore(searchQuery, yearStart, yearEnd)
+                    viewModel.onLoadMore(searchQuery, startYear, endYear)
                 }
                 .launchIn(viewLifecycleOwner.lifecycleScope)
         }

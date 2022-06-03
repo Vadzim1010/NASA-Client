@@ -13,14 +13,14 @@ internal interface NasaImageDao {
 
 
     @Query(
-        "SELECT * FROM NasaImageEntity " +
-                "WHERE (:page) = page " +
-                "AND (:search) = search " +
-                "AND (:yearStart) = year_start " +
-                "AND (:yearEnd) = year_end;"
+        """SELECT * FROM NasaImageEntity 
+                WHERE (:search) = search 
+                AND (:yearStart) = year_start 
+                AND (:yearEnd) = year_end 
+                ORDER BY page ASC LIMIT (:limit)"""
     )
     fun getImagesPage(
-        page: Int,
+        limit: Int,
         search: String,
         yearStart: Int,
         yearEnd: Int

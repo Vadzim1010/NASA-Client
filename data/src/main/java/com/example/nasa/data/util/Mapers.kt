@@ -36,6 +36,7 @@ internal val NasaImageDto.mapToDomain: List<NasaImage>
             NasaImage(
                 id = item.data.getOrNull(0)?.nasaId ?: UUID.randomUUID().toString(),
                 imageUrl = item.links.getOrNull(0)?.href ?: "",
+                totalHits = this.collection.metadata.totalHits
             )
         }
 
@@ -82,7 +83,8 @@ internal fun List<NasaImage>.mapToEntity(
     page: Int,
     searchQuery: String,
     startYear: Int,
-    endYear: Int
+    endYear: Int,
+
 ) = this.map { nasaImage ->
     NasaImageEntity(
         id = nasaImage.id,
@@ -91,6 +93,7 @@ internal fun List<NasaImage>.mapToEntity(
         search = searchQuery,
         yearStart = startYear,
         yearEnd = endYear,
+        totalHits = nasaImage.totalHits,
     )
 }
 
