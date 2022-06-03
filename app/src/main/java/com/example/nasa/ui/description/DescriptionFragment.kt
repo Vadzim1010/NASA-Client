@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -49,26 +50,33 @@ class DescriptionFragment : Fragment() {
                     .onEach { resource ->
                         when (resource) {
                             is Resource.Success -> {
-                                image.load(resource.data?.imageUrl)
-                                title.text = resource.data?.title
-                                description.text = resource.data?.description
+                                progressCircular.isVisible = false
+                                image.load(resource.data.first().imageUrl)
+                                title.text = resource.data.first().title
+                                description.text = resource.data.first().description
                             }
                             is Resource.Error -> {
-                                //TODO
+                                progressCircular.isVisible = false
+                                image.load(resource.data?.first()?.imageUrl)
+                                title.text = resource.data?.first()?.title
+                                description.text = resource.data?.first()?.description
+                                showToast(resource.throwable.message)
                             }
                             is Resource.Loading -> {
-                                progressCircular.isVisible = true
+                                progressCircular.isVisible = resource.data?.first()?.description?.isEmpty() ?: false
+                                image.load(resource.data?.first()?.imageUrl)
+                                title.text = resource.data?.first()?.title
+                                description.text = resource.data?.first()?.description
                             }
-                        }
-                    }
-                    .onEach {
-                        if (it !is Resource.Loading) {
-                            progressCircular.isVisible = false
                         }
                     }
                     .launchIn(viewLifecycleOwner.lifecycleScope)
             }
         }
+    }
+
+    private fun showToast(massage: String?) {
+        Toast.makeText(requireContext(), massage, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {

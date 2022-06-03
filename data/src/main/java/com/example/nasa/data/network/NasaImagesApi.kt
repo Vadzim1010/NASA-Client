@@ -1,6 +1,8 @@
 package com.example.nasa.data.network
 
-import com.example.nasa.data.util.MEDIA_TYPE
+import com.example.nasa.data.model.DescriptionDto
+import com.example.nasa.data.model.NasaImageDto
+import com.example.nasa.domain.util.MEDIA_TYPE
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -14,10 +16,10 @@ internal interface NasaImagesApi {
         @Query("year_start") yearStart: Int,
         @Query("year_end") yearEnd: Int,
         @Query("media_type") mediaType: String = MEDIA_TYPE,
-    ): NasaResponse
+    ): NasaImageDto
 
     @GET("/search")
     suspend fun getDescription(
         @Query("nasa_id") nasaId: String,
-    ): NasaResponse
+    ): DescriptionDto
 }

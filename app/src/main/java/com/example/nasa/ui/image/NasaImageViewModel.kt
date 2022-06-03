@@ -16,27 +16,15 @@ class NasaImageViewModel(private val pagingSource: PagingSource) : ViewModel() {
         pagingSource.onStopLoading()
     }
 
-    fun onRefresh() {
-        pagingSource.onRefresh()
+    fun onRefresh(searchQuery: String, yearStart: Int, yearEnd: Int) {
+        pagingSource.onRefresh(searchQuery, yearStart, yearEnd)
     }
 
-    fun onLoadMore() {
-        pagingSource.onLoadMore()
+    fun onLoadMore(searchQuery: String, yearStart: Int, yearEnd: Int) {
+        pagingSource.onLoadMore(searchQuery, yearStart, yearEnd)
     }
 
-    fun getImagesPagingSource() = pagingSource.getNasaImagePage()
-
-
-    fun setStartYear(yearStart: Int) {
-        pagingSource.setStartYear(yearStart)
-    }
-
-    fun setEndYear(yearEnd: Int) {
-        pagingSource.setEndYear(yearEnd)
-    }
-
-    fun setSearchQuery(searchQuery: String) {
-        pagingSource.setSearchQuery(searchQuery)
-    }
+    fun getImagesPagingSource() =
+        pagingSource.getNasaImagePage()
 }
 

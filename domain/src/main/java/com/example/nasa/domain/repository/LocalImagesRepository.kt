@@ -4,7 +4,7 @@ import com.example.nasa.domain.model.NasaImage
 import kotlinx.coroutines.flow.Flow
 
 
-interface LocalRepository {
+interface LocalImagesRepository {
 
 
     fun getImagePage(

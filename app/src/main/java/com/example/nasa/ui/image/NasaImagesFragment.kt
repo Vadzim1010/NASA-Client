@@ -10,8 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nasa.R
 import com.example.nasa.adapter.NasaImagesAdapter
-import com.example.nasa.data.util.MAX_YEAR
-import com.example.nasa.data.util.MIN_YEAR
+import com.example.nasa.domain.util.MAX_YEAR
+import com.example.nasa.domain.util.MIN_YEAR
 import com.example.nasa.data.util.log
 import com.example.nasa.databinding.FragmentNasaImagesBinding
 import com.example.nasa.domain.model.LceState
@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NasaImagesFragment : Fragment() {
+
 
     private var _binding: FragmentNasaImagesBinding? = null
     private val binding get() = requireNotNull(_binding) { "binding is $_binding" }
@@ -51,63 +52,105 @@ class NasaImagesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initRecycler()
-        initSwipeRefresh()
-        initSearchListener()
+        var startYear = 1920
+        var endYear = 2022
+        var searchQuery = ""
+
+        with(binding) {
+            yearStartEditText.onTextChangedListener()
+                .onEach { year ->
+                    startYear = year
+                        ?.toString()
+                        ?.toIntOrNull()
+                        ?.takeIf { it in MIN_YEAR until MAX_YEAR }
+                        ?.also { yearStartEditContainer.error = "" } ?: run {
+                        yearStartEditContainer.error = "incorrect format"
+                        0
+                    }
+                }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
+
+            yearEndEditText.onTextChangedListener()
+                .onEach { year ->
+                    endYear = year
+                        ?.toString()
+                        ?.toIntOrNull()
+                        ?.takeIf { it in MIN_YEAR + 1..MAX_YEAR }
+                        ?.also { yearEndEditContainer.error = "" } ?: run {
+                        yearEndEditContainer.error = "incorrect format"
+                        0
+                    }
+                }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
+
+            toolbar.onSearchListenerFlow()
+                .onEach { text ->
+                    searchQuery = text ?: ""
+
+                    viewModel.onRefresh(searchQuery, startYear, endYear)
+                    nasaImagesAdapter.submitList(emptyList())
+                    binding.progressCircular.isVisible = true
+                }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
+        }
+
+        initRecycler(searchQuery, startYear, endYear)
+        initSwipeRefresh(searchQuery, startYear, endYear)
         subscribeOnPagingData()
     }
 
-    private fun subscribeOnPagingData() = with(binding) {
-        viewModel
-            .getImagesPagingSource()
-            .onEach { resource ->
-                when (resource) {
-                    is LceState.Content -> {
-                        progressCircular.isVisible = false
-                        swipeRefresh.isRefreshing = false
+    private fun subscribeOnPagingData() =
+        with(binding) {
+            viewModel
+                .getImagesPagingSource()
+                .onEach { resource ->
+                    when (resource) {
+                        is LceState.Content -> {
+                            progressCircular.isVisible = false
+                            swipeRefresh.isRefreshing = false
 
-                        log("content size: ${resource.data.size}")
+                            log("content size: ${resource.data.size}")
 
-                        val networkList = if (!resource.hasMoreData) {
-                            resource.data.mapToPage.plus(PagingItem.Loading)
-                        } else {
-                            resource.data.mapToPage
+                            val networkList = if (!resource.hasMoreData) {
+                                resource.data.mapToPage.plus(PagingItem.Loading)
+                            } else {
+                                resource.data.mapToPage
+                            }
+
+                            nasaImagesAdapter.submitList(networkList)
                         }
+                        is LceState.Error -> {
+                            progressCircular.isVisible = false
+                            swipeRefresh.isRefreshing = false
 
-                        nasaImagesAdapter.submitList(networkList)
-                    }
-                    is LceState.Error -> {
-                        progressCircular.isVisible = false
-                        swipeRefresh.isRefreshing = false
+                            val cacheList = resource.data?.mapToPage
 
-                        val cacheList = resource.data?.mapToPage
-
-                        nasaImagesAdapter.submitList(cacheList)
-                    }
-                    is LceState.Loading -> {
-                        val cacheList = resource.data?.mapToPage ?: emptyList()
-
-                        progressCircular.isVisible = cacheList.isNullOrEmpty()
-                        swipeRefresh.isRefreshing = cacheList.isNullOrEmpty()
-
-                        if (!cacheList.isNullOrEmpty()) {
                             nasaImagesAdapter.submitList(cacheList)
+                        }
+                        is LceState.Loading -> {
+                            val cacheList = resource.data?.mapToPage ?: emptyList()
+
+                            progressCircular.isVisible = cacheList.isNullOrEmpty()
+
+                            if (!cacheList.isNullOrEmpty()) {
+                                nasaImagesAdapter.submitList(cacheList)
+                            }
                         }
                     }
                 }
-            }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
-    }
-
-    private fun initSwipeRefresh() = with(binding) {
-        swipeRefresh.setOnRefreshListener {
-            viewModel.onRefresh()
-            nasaImagesAdapter.submitList(emptyList())
-            binding.progressCircular.isVisible = true
+                .launchIn(viewLifecycleOwner.lifecycleScope)
         }
-    }
 
-    private fun initRecycler() = with(binding) {
+    private fun initSwipeRefresh(searchQuery: String, yearStart: Int, yearEnd: Int) =
+        with(binding) {
+            swipeRefresh.setOnRefreshListener {
+                viewModel.onRefresh(searchQuery, yearStart, yearEnd)
+                nasaImagesAdapter.submitList(emptyList())
+                binding.progressCircular.isVisible = true
+            }
+        }
+
+    private fun initRecycler(searchQuery: String, yearStart: Int, yearEnd: Int) = with(binding) {
         val manager = LinearLayoutManager(requireContext())
         recycler.apply {
             layoutManager = manager
@@ -118,52 +161,10 @@ class NasaImagesFragment : Fragment() {
                 itemsToLoad = 30,
             )
                 .onEach {
-                    viewModel.onLoadMore()
+                    viewModel.onLoadMore(searchQuery, yearStart, yearEnd)
                 }
                 .launchIn(viewLifecycleOwner.lifecycleScope)
         }
-    }
-
-    private fun initSearchListener() = with(binding) {
-        yearStartEditText.onTextChangedListener()
-            .onEach { startYear ->
-                val year = startYear
-                    ?.toString()
-                    ?.toIntOrNull()
-                    ?.takeIf { it in MIN_YEAR until MAX_YEAR }
-                    ?.also { yearStartEditContainer.error = "" } ?: run {
-                    yearStartEditContainer.error = "incorrect format"
-                    0
-                }
-                viewModel.setStartYear(year)
-            }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
-
-        yearEndEditText.onTextChangedListener()
-            .onEach { endYear ->
-                val year = endYear
-                    ?.toString()
-                    ?.toIntOrNull()
-                    ?.takeIf { it in MIN_YEAR + 1..MAX_YEAR }
-                    ?.also { yearEndEditContainer.error = "" } ?: run {
-                    yearEndEditContainer.error = "incorrect format"
-                    0
-                }
-                viewModel.setEndYear(year)
-            }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
-
-        toolbar.onSearchListenerFlow()
-            .onEach { text ->
-                val query = text ?: ""
-                viewModel.setSearchQuery(query)
-            }
-            .onEach {
-                viewModel.onRefresh()
-                nasaImagesAdapter.submitList(emptyList())
-                binding.progressCircular.isVisible = true
-            }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onDestroyView() {

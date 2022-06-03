@@ -21,7 +21,7 @@ data class NasaImageEntity(
     val yearEnd: Int,
 ) {
 
-    fun toModel() = com.example.nasa.domain.model.NasaImage(
+    fun toDomain() = NasaImage(
         id = id,
         imageUrl = imageUrl,
     )

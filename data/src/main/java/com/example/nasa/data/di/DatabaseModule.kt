@@ -19,4 +19,12 @@ internal val databaseModule = module {
     single {
         get<NasaDatabase>().getImageDao()
     }
+
+    single {
+        get<NasaDatabase>().getDescriptionDao()
+    }
+
+    single {
+        get<NasaDatabase>().getImageDescriptionDao()
+    }
 }

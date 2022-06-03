@@ -66,10 +66,8 @@ fun Toolbar.onSearchListenerFlow() = callbackFlow {
 
         override fun onQueryTextChange(newText: String?): Boolean {
             // to not start search with empty query when init search line
-            if (isSearchStarted) {
-                if (newText.isNullOrBlank()) {
-                    this@callbackFlow.trySend(newText)
-                }
+            if (isSearchStarted && newText.isNullOrBlank()) {
+                this@callbackFlow.trySend(newText)
             }
             isSearchStarted = true
             return true
@@ -91,4 +89,3 @@ fun EditText.onTextChangedListener() = callbackFlow {
         this@onTextChangedListener.removeTextChangedListener(watcher)
     }
 }
-

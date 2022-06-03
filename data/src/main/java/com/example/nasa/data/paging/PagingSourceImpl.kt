@@ -1,14 +1,14 @@
 package com.example.nasa.data.paging
 
-import com.example.nasa.data.model.SearchParams
-import com.example.nasa.data.util.MAX_PAGE
-import com.example.nasa.data.util.PAGE_SIZE
+import com.example.nasa.data.model.LoadState
 import com.example.nasa.data.util.log
 import com.example.nasa.domain.model.LceState
 import com.example.nasa.domain.model.NasaImage
 import com.example.nasa.domain.model.Resource
 import com.example.nasa.domain.paging.PagingSource
 import com.example.nasa.domain.usecase.GetImagePageUseCase
+import com.example.nasa.domain.util.MAX_PAGE
+import com.example.nasa.domain.util.PAGE_SIZE
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
@@ -22,8 +22,6 @@ internal class PagingSourceImpl(
         replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
-    private val searchParams = SearchParams()
-
 
     private var currentList = listOf<NasaImage>()
     private var cacheSize = 0
@@ -32,40 +30,52 @@ internal class PagingSourceImpl(
     private var isLastPage = false
 
 
-    override fun onLoadMore() {
+    override fun onLoadMore(searchQuery: String, yearStart: Int, yearEnd: Int) {
         if (!isLastPage && !isLoading) {
-            loadStateFlow.tryEmit(LoadState.LOAD_MORE)
+            loadStateFlow.tryEmit(
+                LoadState.LoadMore(
+                    searchQuery = searchQuery,
+                    yearStart = yearStart,
+                    yearEnd = yearEnd,
+                )
+            )
         }
     }
 
-    override fun onRefresh() {
-        loadStateFlow.tryEmit(LoadState.REFRESH)
+    override fun onRefresh(searchQuery: String, yearStart: Int, yearEnd: Int) {
+        loadStateFlow.tryEmit(
+            LoadState.Refresh(
+                searchQuery = searchQuery,
+                yearStart = yearStart,
+                yearEnd = yearEnd,
+            )
+        )
     }
 
     override fun onStopLoading() {
-        loadStateFlow.tryEmit(LoadState.STOP)
+        loadStateFlow.tryEmit(LoadState.Stop)
     }
 
     override fun getNasaImagePage(): Flow<LceState<List<NasaImage>>> = loadStateFlow
-        .filter { it != LoadState.STOP }
+        .filter { it != LoadState.Stop }
         .flatMapLatest { loadState ->
-            if (loadState == LoadState.REFRESH) {
+            if (loadState is LoadState.Refresh) {
                 currentList = emptyList()
                 currentPage = 1
             }
+
+            log("${loadState.searchQuery} ${loadState.yearStart} ${loadState.yearEnd}")
+
             getImagePageUseCase(
                 page = currentPage,
-                query = searchParams.searchQuery,
-                startYear = searchParams.yearStart,
-                endYear = searchParams.yearEnd,
+                query = loadState.searchQuery,
+                startYear = loadState.yearStart,
+                endYear = loadState.yearEnd,
             )
         }
         .onEach {
             isLoading = true
             log("isLoading: $isLoading")
-        }
-        .onEach {
-            log(searchParams.toString())
         }
         .onEach {
             log("page $currentPage")
@@ -120,22 +130,4 @@ internal class PagingSourceImpl(
         .onStart {
             emit(LceState.Loading(currentList))
         }
-
-
-    override fun setStartYear(startYear: Int) {
-        searchParams.yearStart = startYear
-    }
-
-    override fun setEndYear(endYear: Int) {
-        searchParams.yearEnd = endYear
-    }
-
-    override fun setSearchQuery(searchQuery: String) {
-        searchParams.searchQuery = searchQuery
-    }
-}
-
-
-enum class LoadState {
-    LOAD_MORE, REFRESH, STOP
 }

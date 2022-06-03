@@ -2,16 +2,15 @@ package com.example.nasa.domain.usecase
 
 import com.example.nasa.domain.model.NasaImage
 import com.example.nasa.domain.model.Resource
-import com.example.nasa.domain.repository.LocalRepository
-import com.example.nasa.domain.repository.RemoteRepository
+import com.example.nasa.domain.repository.LocalImagesRepository
+import com.example.nasa.domain.repository.RemoteImagesRepository
 import com.example.nasa.domain.util.networkBoundResource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.runningReduce
 
 
 class GetImagePageUseCase(
-    private val remoteRepository: RemoteRepository,
-    private val localRepository: LocalRepository,
+    private val remoteRepository: RemoteImagesRepository,
+    private val localRepository: LocalImagesRepository,
 ) {
 
 

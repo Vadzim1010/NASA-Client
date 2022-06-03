@@ -2,10 +2,7 @@ package com.example.nasa.data.network
 
 import com.google.gson.annotations.SerializedName
 
-internal data class NasaResponse(
-    @SerializedName("collection")
-    val collection: Collection
-)
+
 
 internal data class Collection(
     @SerializedName("href")
