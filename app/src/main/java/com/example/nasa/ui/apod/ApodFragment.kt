@@ -25,6 +25,7 @@ class ApodFragment : Fragment() {
 
     private val viewModel by viewModel<ApodViewModel>()
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

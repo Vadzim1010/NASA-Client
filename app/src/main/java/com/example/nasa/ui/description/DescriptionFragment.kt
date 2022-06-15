@@ -33,6 +33,7 @@ class DescriptionFragment : Fragment() {
 
     private val viewModel by viewModel<DescriptionViewModel> { parametersOf(nasaId) }
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

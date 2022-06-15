@@ -15,10 +15,7 @@ import com.example.nasa.databinding.FragmentNasaImagesBinding
 import com.example.nasa.domain.model.NasaImage
 import com.example.nasa.domain.model.PagingItem
 import com.example.nasa.domain.model.Resource
-import com.example.nasa.domain.util.DEFAULT_SEARCH_QUERY
-import com.example.nasa.domain.util.MAX_YEAR
-import com.example.nasa.domain.util.MIN_YEAR
-import com.example.nasa.domain.util.mapToPage
+import com.example.nasa.domain.util.*
 import com.example.nasa.ui.navigate
 import com.example.nasa.utils.addBottomSpaceDecorationRes
 import com.example.nasa.utils.addScrollListenerFlow
@@ -96,12 +93,13 @@ class NasaImagesFragment : Fragment() {
                 progressCircular.isVisible = false
                 swipeRefresh.isRefreshing = false
 
-                val pagingList = if (totalHits > imageList.size) {
-                    imageList.mapToPage
-                        .plus(PagingItem.Loading)
-                } else {
-                    imageList.mapToPage
-                }
+                val pagingList =
+                    if (totalHits > imageList.size || imageList.size >= MAX_PAGE * PAGE_SIZE) {
+                        imageList.mapToPage
+                            .plus(PagingItem.Loading)
+                    } else {
+                        imageList.mapToPage
+                    }
 
                 nasaImagesAdapter.submitList(pagingList)
             }
