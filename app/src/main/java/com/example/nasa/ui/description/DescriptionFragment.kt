@@ -13,11 +13,13 @@ import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.setupWithNavController
 import coil.load
 import com.example.nasa.databinding.FragmentDescriptionBinding
+import com.example.nasa.domain.model.Description
 import com.example.nasa.domain.model.Resource
+import com.example.nasa.domain.util.emptyDescription
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class DescriptionFragment : Fragment() {
 
@@ -27,7 +29,9 @@ class DescriptionFragment : Fragment() {
 
     private val args by navArgs<DescriptionFragmentArgs>()
 
-    private val viewModel by viewModel<DescriptionViewModel>()
+    private val nasaId by lazy { args.itemId }
+
+    private val viewModel by viewModel<DescriptionViewModel> { parametersOf(nasaId) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,52 +46,53 @@ class DescriptionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val nasaId = args.itemId
-
-        with(binding) {
-            toolbar.setupWithNavController(findNavController())
-            viewModel.fetchDescription(nasaId)
-                .onEach { resource ->
-                    when (resource) {
-                        is Resource.Success -> {
-                            progressCircular.isVisible = false
-
-                            image.load(resource.data.first().imageUrl)
-                            title.text = resource.data.first().title
-                            description.text = resource.data.first().description
-                        }
-                        is Resource.Error -> {
-                            progressCircular.isVisible = false
-
-                            if (!resource.data.isNullOrEmpty()) {
-                                image.load(resource.data?.first()?.imageUrl)
-                                title.text = resource.data?.first()?.title
-                                description.text = resource.data?.first()?.description
-                            }
-                            showToast(resource.throwable.message)
-                        }
-                        is Resource.Loading -> {
-                            progressCircular.isVisible =
-                                resource.data?.first()?.description.isNullOrEmpty()
-
-                            if (!resource.data.isNullOrEmpty()) {
-                                image.load(resource.data?.first()?.imageUrl)
-                                title.text = resource.data?.first()?.title
-                                description.text = resource.data?.first()?.description
-                            }
-                        }
-                    }
-                }
-                .launchIn(viewLifecycleOwner.lifecycleScope)
-        }
-    }
-
-    private fun showToast(massage: String?) {
-        Toast.makeText(requireContext(), massage, Toast.LENGTH_SHORT).show()
+        initButtons()
+        subscribeOnDataFlow()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun initButtons() = with(binding) {
+        toolbar.setupWithNavController(findNavController())
+    }
+
+    private fun subscribeOnDataFlow() {
+        viewModel.descriptionFlow
+            .onEach(::render)
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    private fun render(resource: Resource<List<Description>>) = with(binding) {
+        val data = resource.data
+        val throwable = resource.throwable
+        val description = data?.firstOrNull() ?: emptyDescription
+
+        renderData(description)
+
+        when (resource) {
+            is Resource.Success -> {
+                progressCircular.isVisible = false
+            }
+            is Resource.Error -> {
+                progressCircular.isVisible = false
+                showToast(throwable?.message ?: "")
+            }
+            is Resource.Loading -> {
+                progressCircular.isVisible = data?.firstOrNull()?.description.isNullOrEmpty()
+            }
+        }
+    }
+
+    private fun renderData(imageDescription: Description) = with(binding) {
+        image.load(imageDescription.imageUrl)
+        title.text = imageDescription.title
+        description.text = imageDescription.description
+    }
+
+    private fun showToast(massage: String?) {
+        Toast.makeText(requireContext(), massage, Toast.LENGTH_SHORT).show()
     }
 }

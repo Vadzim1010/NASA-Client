@@ -25,7 +25,7 @@ internal class LocalImagesRepositoryImpl(
             yearStart = startYear,
             yearEnd = endYear
         )
-        .mapToDomain
+        .mapToDomain()
 
     override suspend fun insertImagePage(
         page: Int,

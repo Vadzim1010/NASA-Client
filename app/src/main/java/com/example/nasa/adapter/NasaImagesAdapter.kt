@@ -6,8 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.nasa.adapter.holder.ErrorViewHolder
 import com.example.nasa.adapter.holder.LoadingViewHolder
 import com.example.nasa.adapter.holder.NasaImageViewHolder
+import com.example.nasa.databinding.ItemErrorBinding
 import com.example.nasa.databinding.ItemLoadingBinding
 import com.example.nasa.databinding.ItemNasaImageBinding
 import com.example.nasa.domain.model.NasaImage
@@ -43,6 +45,11 @@ class NasaImagesAdapter(
                     ItemLoadingBinding.inflate(layoutInflater, parent, false)
                 )
             }
+            TYPE_ERROR -> {
+                ErrorViewHolder(
+                    ItemErrorBinding.inflate(layoutInflater, parent, false)
+                )
+            }
             else -> {
                 error("unknown type")
             }
@@ -54,7 +61,12 @@ class NasaImagesAdapter(
             TYPE_CONTENT -> {
                 val typedHolder = holder as? NasaImageViewHolder ?: return
                 val typedItem = getItem(position) as? PagingItem.Content ?: return
-                typedHolder.bind(typedItem)
+                typedHolder.bind(typedItem.data)
+            }
+            TYPE_ERROR -> {
+                val typedHolder = holder as? ErrorViewHolder ?: return
+                val typedItem = getItem(position) as? PagingItem.Error ?: return
+                typedHolder.bind(typedItem.throwable)
             }
         }
     }
@@ -72,7 +84,10 @@ class NasaImagesAdapter(
                 oldItem: PagingItem<NasaImage>,
                 newItem: PagingItem<NasaImage>
             ): Boolean {
-                return oldItem == newItem
+                val oldContent = oldItem as? PagingItem.Content ?: return false
+                val newContent = newItem as? PagingItem.Content ?: return false
+
+                return oldContent.data.id == newContent.data.id
             }
 
             override fun areContentsTheSame(
@@ -81,6 +96,7 @@ class NasaImagesAdapter(
             ): Boolean {
                 val oldContent = oldItem as? PagingItem.Content ?: return false
                 val newContent = newItem as? PagingItem.Content ?: return false
+
                 return oldContent.data.imageUrl == newContent.data.imageUrl
             }
         }

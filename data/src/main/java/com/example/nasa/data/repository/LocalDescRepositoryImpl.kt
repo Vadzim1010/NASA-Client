@@ -16,10 +16,10 @@ class LocalDescRepositoryImpl(
 
     override fun getDescription(id: String): Flow<List<Description>> =
         imageDescriptionDao.getImageDescription(id)
-            .mapDescToDomain
+            .mapDescToDomain()
 
 
     override suspend fun insertDescription(description: Description) {
-        descriptionDao.insertDescription(description.toEntity)
+        descriptionDao.insertDescription(description.toEntity())
     }
 }

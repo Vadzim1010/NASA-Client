@@ -25,6 +25,6 @@ internal class RemoteImagesRepositoryImpl(
             searchQuery = query,
             yearStart = startYear,
             yearEnd = endYear,
-        ).mapToDomain
+        ).mapToDomain()
     }
 }

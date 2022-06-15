@@ -12,6 +12,7 @@ import com.example.nasa.R
 import com.example.nasa.adapter.NasaImagesAdapter
 import com.example.nasa.data.util.log
 import com.example.nasa.databinding.FragmentNasaImagesBinding
+import com.example.nasa.domain.model.NasaImage
 import com.example.nasa.domain.model.PagingItem
 import com.example.nasa.domain.model.Resource
 import com.example.nasa.domain.util.DEFAULT_SEARCH_QUERY
@@ -40,9 +41,13 @@ class NasaImagesFragment : Fragment() {
             navigate(nasaId)
         }
     }
+
     private var startYear = MIN_YEAR
+
     private var endYear = MAX_YEAR
+
     private var searchQuery = DEFAULT_SEARCH_QUERY
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,102 +61,112 @@ class NasaImagesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        with(binding) {
-            yearStartEditText.onTextChangedListener()
-                .onEach { year ->
-                    startYear = year
-                        ?.toString()
-                        ?.toIntOrNull()
-                        ?.takeIf { it in MIN_YEAR until MAX_YEAR }
-                        ?.also { yearStartEditContainer.error = "" } ?: run {
-                        yearStartEditContainer.error = "incorrect format"
-                        0
-                    }
-                }
-                .launchIn(viewLifecycleOwner.lifecycleScope)
 
-            yearEndEditText.onTextChangedListener()
-                .onEach { year ->
-                    endYear = year
-                        ?.toString()
-                        ?.toIntOrNull()
-                        ?.takeIf { it in MIN_YEAR + 1..MAX_YEAR }
-                        ?.also { yearEndEditContainer.error = "" } ?: run {
-                        yearEndEditContainer.error = "incorrect format"
-                        0
-                    }
-                }
-                .launchIn(viewLifecycleOwner.lifecycleScope)
-
-            toolbar.onSearchListenerFlow()
-                .onEach { text ->
-                    searchQuery = text ?: ""
-
-                    viewModel.onRefresh(searchQuery, startYear, endYear)
-                    nasaImagesAdapter.submitList(emptyList())
-                    binding.progressCircular.isVisible = true
-                }
-                .launchIn(viewLifecycleOwner.lifecycleScope)
-        }
-
+        initSearchListeners()
         initRecycler()
         initSwipeRefresh()
-        subscribeOnPagingData()
+        subscribeOnDataFlow()
     }
 
-    private fun subscribeOnPagingData() =
-        with(binding) {
-            viewModel
-                .getImagesPagingSource()
-                .onEach { resource ->
-                    when (resource) {
-                        is Resource.Success -> {
-                            progressCircular.isVisible = false
-                            swipeRefresh.isRefreshing = false
 
-                            log("content size: ${resource.data.size}")
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
-                            val totalHits = resource.data.lastOrNull()?.totalHits ?: 0
 
-                            log("total content length: $totalHits")
+    private fun subscribeOnDataFlow() {
+        viewModel
+            .pagingSourceFlow
+            .onEach(::render)
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+    }
 
-                            val networkList =
-                                if (totalHits > resource.data.size) {
-                                    resource.data.mapToPage.plus(PagingItem.Loading)
-                                } else {
-                                    resource.data.mapToPage
-                                }
 
-                            nasaImagesAdapter.submitList(networkList)
-                        }
-                        is Resource.Error -> {
-                            progressCircular.isVisible = false
-                            swipeRefresh.isRefreshing = false
+    private fun render(resource: Resource<List<NasaImage>>) = with(binding) {
+        val imageList = resource.data ?: emptyList()
+        val throwable = resource.throwable
+        val totalHits = imageList.lastOrNull()?.totalHits ?: 0
 
-                            val cacheList = resource.data?.mapToPage
+        log("content size: ${imageList.size}")
+        log("total content length: $totalHits")
 
-                            nasaImagesAdapter.submitList(cacheList)
-                        }
-                        is Resource.Loading -> {
-                            val cacheList = resource.data?.mapToPage ?: emptyList()
+        when (resource) {
+            is Resource.Success -> {
+                progressCircular.isVisible = false
+                swipeRefresh.isRefreshing = false
 
-                            progressCircular.isVisible = cacheList.isNullOrEmpty()
-
-                            if (cacheList.size > nasaImagesAdapter.currentList.size) {
-                                nasaImagesAdapter.submitList(cacheList)
-                            }
-                        }
-                    }
+                val pagingList = if (totalHits > imageList.size) {
+                    imageList.mapToPage
+                        .plus(PagingItem.Loading)
+                } else {
+                    imageList.mapToPage
                 }
-                .launchIn(viewLifecycleOwner.lifecycleScope)
+
+                nasaImagesAdapter.submitList(pagingList)
+            }
+            is Resource.Error -> {
+                progressCircular.isVisible = false
+                swipeRefresh.isRefreshing = false
+
+                val pagingList = imageList.mapToPage
+                    .plus(throwable
+                        ?.let { PagingItem.Error(it) })
+
+                nasaImagesAdapter.submitList(pagingList)
+            }
+            is Resource.Loading -> {
+                progressCircular.isVisible = imageList.isNullOrEmpty()
+
+                if (imageList.size > nasaImagesAdapter.currentList.size) {
+                    nasaImagesAdapter.submitList(imageList.mapToPage)
+                }
+            }
         }
+    }
+
+    private fun initSearchListeners() = with(binding) {
+        yearStartEditText.onTextChangedListener()
+            .onEach { year ->
+                startYear = year
+                    ?.toString()
+                    ?.toIntOrNull()
+                    ?.takeIf { it in MIN_YEAR until MAX_YEAR }
+                    ?.also { yearStartEditContainer.error = "" } ?: run {
+                    yearStartEditContainer.error = "incorrect format"
+                    0
+                }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        yearEndEditText.onTextChangedListener()
+            .onEach { year ->
+                endYear = year
+                    ?.toString()
+                    ?.toIntOrNull()
+                    ?.takeIf { it in MIN_YEAR + 1..MAX_YEAR }
+                    ?.also { yearEndEditContainer.error = "" } ?: run {
+                    yearEndEditContainer.error = "incorrect format"
+                    0
+                }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        toolbar.onSearchListenerFlow()
+            .onEach { text ->
+                searchQuery = text ?: ""
+
+                viewModel.onRefresh(searchQuery, startYear, endYear)
+                nasaImagesAdapter.submitList(emptyList())
+                binding.progressCircular.isVisible = true
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+    }
 
     private fun initSwipeRefresh() =
         with(binding) {
             swipeRefresh.setOnRefreshListener {
                 viewModel.onRefresh(searchQuery, startYear, endYear)
-                nasaImagesAdapter.submitList(emptyList())
-                binding.progressCircular.isVisible = true
             }
         }
 
@@ -170,11 +185,5 @@ class NasaImagesFragment : Fragment() {
                 }
                 .launchIn(viewLifecycleOwner.lifecycleScope)
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-        viewModel.onStopLoading()
     }
 }

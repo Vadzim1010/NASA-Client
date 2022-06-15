@@ -22,22 +22,22 @@ internal val networkModule = module {
     }
 
     single {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(ApiConfig.NASA_IMAGES_ENDPOINT)
+        Retrofit.Builder()
             .client(get())
             .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        retrofit.create<NasaImagesApi>()
     }
 
     single {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(ApiConfig.NASA_ENDPOINT)
-            .client(get())
-            .addConverterFactory(GsonConverterFactory.create())
+        get<Retrofit.Builder>()
+            .baseUrl(ApiConfig.NASA_IMAGES_ENDPOINT)
             .build()
+            .create<NasaImagesApi>()
+    }
 
-        retrofit.create<NasaApi>()
+    single {
+        get<Retrofit.Builder>()
+            .baseUrl(ApiConfig.NASA_ENDPOINT)
+            .build()
+            .create<NasaApi>()
     }
 }

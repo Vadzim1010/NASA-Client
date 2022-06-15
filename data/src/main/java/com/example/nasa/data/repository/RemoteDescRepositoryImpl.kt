@@ -14,7 +14,7 @@ internal class RemoteDescRepositoryImpl(
     override suspend fun fetchDescription(nasaId: String): Result<Description> = runCatching {
         delay(2000) // delay for testing
         nasaImagesApi.getDescription(nasaId)
-            .mapToDomain
+            .mapToDomain()
             .first { it.nasaId.isNotBlank() }
     }
 }

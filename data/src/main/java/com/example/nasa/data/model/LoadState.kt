@@ -16,6 +16,4 @@ sealed class LoadState(
 
     class Refresh(searchQuery: String, yearStart: Int, yearEnd: Int) :
         LoadState(searchQuery, yearStart, yearEnd)
-
-    object Stop : LoadState()
 }

@@ -17,66 +17,41 @@ import kotlinx.coroutines.flow.map
 import java.util.*
 
 
-internal val Flow<List<NasaImageEntity>>.mapToDomain: Flow<List<NasaImage>>
-    get() = this.map { list -> list.map { it.toDomain() } }
+internal fun Flow<List<NasaImageEntity>>.mapToDomain(): Flow<List<NasaImage>> =
+    this.map { list -> list.map { it.toDomain() } }
 
 
-internal val Flow<List<ImageDescriptionEntity>>.mapDescToDomain: Flow<List<Description>>
-    get() = this.map { list -> list.map { it.toDomain() } }
-
-internal val Flow<List<ApodEntity>>.mapApodToDomain: Flow<List<Apod>>
-    get() = this.map { list -> list.map { it.toDomain() } }
+internal fun Flow<List<ImageDescriptionEntity>>.mapDescToDomain(): Flow<List<Description>> =
+    this.map { list -> list.map { it.toDomain() } }
 
 
-internal val NasaImageDto.mapToDomain: List<NasaImage>
-    get() = this
-        .collection
-        .items
-        .map { item ->
-            NasaImage(
-                id = item.data.getOrNull(0)?.nasaId ?: UUID.randomUUID().toString(),
-                imageUrl = item.links.getOrNull(0)?.href ?: "",
-                totalHits = this.collection.metadata.totalHits
-            )
-        }
+internal fun Flow<List<ApodEntity>>.mapApodToDomain(): Flow<List<Apod>> =
+    this.map { list -> list.map { it.toDomain() } }
 
 
-internal val DescriptionDto.mapToDomain: List<Description>
-    get() = this
-        .collection
-        .items
-        .map { item ->
-            Description(
-                nasaId = item.data.getOrNull(0)?.nasaId ?: "",
-                title = item.data.getOrNull(0)?.title ?: "",
-                description = item.data.getOrNull(0)?.description ?: "",
-                imageUrl = item.links.getOrNull(0)?.href ?: "",
-            )
-        }
+internal fun NasaImageDto.mapToDomain(): List<NasaImage> = this
+    .collection
+    .items
+    .map { item ->
+        NasaImage(
+            id = item.data.getOrNull(0)?.nasaId ?: UUID.randomUUID().toString(),
+            imageUrl = item.links.getOrNull(0)?.href ?: "",
+            totalHits = this.collection.metadata.totalHits
+        )
+    }
 
 
-internal val NasaApodResponse.toDomain: Apod
-    get() = ApodDto(
-        title = this.title,
-        date = this.date,
-        imageUrl = this.url
-    ).toDomain()
-
-
-internal val Description.toEntity: DescriptionEntity
-    get() = DescriptionEntity(
-        nasaImageId = this.nasaId,
-        title = this.title,
-        description = this.description,
-        imageUrl = this.imageUrl
-    )
-
-internal val Apod.toEntity: ApodEntity
-    get() = ApodEntity(
-        title = this.title,
-        date = this.date,
-        imageUrl = this.imageUrl,
-    )
+internal fun DescriptionDto.mapToDomain(): List<Description> = this
+    .collection
+    .items
+    .map { item ->
+        Description(
+            nasaId = item.data.getOrNull(0)?.nasaId ?: "",
+            title = item.data.getOrNull(0)?.title ?: "",
+            description = item.data.getOrNull(0)?.description ?: "",
+            imageUrl = item.links.getOrNull(0)?.href ?: "",
+        )
+    }
 
 
 internal fun List<NasaImage>.mapToEntity(
@@ -85,7 +60,7 @@ internal fun List<NasaImage>.mapToEntity(
     startYear: Int,
     endYear: Int,
 
-) = this.map { nasaImage ->
+    ) = this.map { nasaImage ->
     NasaImageEntity(
         id = nasaImage.id,
         imageUrl = nasaImage.imageUrl,
@@ -96,6 +71,57 @@ internal fun List<NasaImage>.mapToEntity(
         totalHits = nasaImage.totalHits,
     )
 }
+
+
+internal fun Description.toEntity(): DescriptionEntity = DescriptionEntity(
+    nasaImageId = this.nasaId,
+    title = this.title,
+    description = this.description,
+    imageUrl = this.imageUrl
+)
+
+
+internal fun Apod.toEntity(): ApodEntity = ApodEntity(
+    title = this.title,
+    date = this.date,
+    imageUrl = this.imageUrl,
+)
+
+
+internal fun ApodEntity.toDomain() = Apod(
+    title = title,
+    date = date,
+    imageUrl = imageUrl,
+)
+
+
+internal fun ImageDescriptionEntity.toDomain() = Description(
+    nasaId = descriptionEntity?.nasaImageId ?: "",
+    title = descriptionEntity?.title ?: "",
+    description = descriptionEntity?.description ?: "",
+    imageUrl = nasaImageEntity.imageUrl
+)
+
+
+internal fun NasaImageEntity.toDomain() = NasaImage(
+    id = id,
+    imageUrl = imageUrl,
+    totalHits = totalHits,
+)
+
+
+internal fun NasaApodResponse.toDomain(): Apod = ApodDto(
+    title = this.title,
+    date = this.date,
+    imageUrl = this.url
+).toDomain()
+
+
+internal fun ApodDto.toDomain() = Apod(
+    title = title,
+    date = date,
+    imageUrl = imageUrl
+)
 
 
 fun log(message: String) {

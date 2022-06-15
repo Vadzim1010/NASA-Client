@@ -3,7 +3,6 @@ package com.example.nasa.data.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.nasa.domain.model.NasaImage
 
 @Entity
 data class NasaImageEntity(
@@ -21,11 +20,4 @@ data class NasaImageEntity(
     val yearEnd: Int,
     @ColumnInfo(name = "total_hits")
     val totalHits: Int
-) {
-
-    fun toDomain() = NasaImage(
-        id = id,
-        imageUrl = imageUrl,
-        totalHits = totalHits,
-    )
-}
+)

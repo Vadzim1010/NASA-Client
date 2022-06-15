@@ -13,11 +13,11 @@ internal class LocalApodRepositoryImpl(private val apodDao: ApodDao) : LocalApod
 
     override fun getPictureOfDay(): Flow<List<Apod>> =
         apodDao.getPictureOfDay()
-            .mapApodToDomain
+            .mapApodToDomain()
 
 
     override suspend fun insertPictureOfDay(apod: Apod) {
-        apodDao.insertPictureOfDay(apod.toEntity)
+        apodDao.insertPictureOfDay(apod.toEntity())
     }
 
 
