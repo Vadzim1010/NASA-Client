@@ -17,19 +17,27 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            style="@style/Widget.MaterialComponents.Toolbar.Primary"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
+            style="@style/Widget.MaterialComponents.AppBarLayout.Primary"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:menu="@menu/menu_search"
-            app:title="@string/app_name" />
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                style="@style/Widget.MaterialComponents.Toolbar.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:menu="@menu/menu_search"
+                app:title="@string/app_name" />
+
+        </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipe_refresh"
             android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:layout_height="match_parent">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler"
@@ -66,8 +74,8 @@
                     android:inputType="number"
                     android:lines="1"
                     android:maxLength="4"
-                    android:textSize="@dimen/app_text_size"
-                    android:text="@string/min_year" />
+                    android:text="@string/min_year"
+                    android:textSize="@dimen/app_text_size" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -89,8 +97,8 @@
                     android:inputType="number"
                     android:lines="1"
                     android:maxLength="4"
-                    android:textSize="@dimen/app_text_size"
-                    android:text="@string/max_year" />
+                    android:text="@string/max_year"
+                    android:textSize="@dimen/app_text_size" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

@@ -5,7 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -47,6 +50,7 @@ class DescriptionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setInsets()
         initButtons()
         subscribeOnDataFlow()
     }
@@ -95,5 +99,15 @@ class DescriptionFragment : Fragment() {
 
     private fun showToast(massage: String?) {
         Toast.makeText(requireContext(), massage, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setInsets() = with(binding) {
+        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+            appBar.updatePadding(
+                top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            )
+
+            WindowInsetsCompat.CONSUMED
+        }
     }
 }

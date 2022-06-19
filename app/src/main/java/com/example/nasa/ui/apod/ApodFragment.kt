@@ -5,14 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import coil.load
-import com.example.nasa.databinding.FragmentPictureOfDayBinding
+import com.example.nasa.R
+import com.example.nasa.databinding.FragmentApodBinding
 import com.example.nasa.domain.model.Apod
 import com.example.nasa.domain.model.Resource
 import com.example.nasa.domain.util.emptyApod
+import com.example.nasa.ui.navigate
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -20,7 +25,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ApodFragment : Fragment() {
 
-    private var _binding: FragmentPictureOfDayBinding? = null
+    private var _binding: FragmentApodBinding? = null
     private val binding get() = requireNotNull(_binding) { "binding is $_binding" }
 
     private val viewModel by viewModel<ApodViewModel>()
@@ -31,7 +36,7 @@ class ApodFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return FragmentPictureOfDayBinding.inflate(layoutInflater, container, false)
+        return FragmentApodBinding.inflate(layoutInflater, container, false)
             .also { _binding = it }
             .root
     }
@@ -39,7 +44,9 @@ class ApodFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initButtons()
         subscribeOnDataFlow()
+        setInsets()
     }
 
     override fun onDestroyView() {
@@ -82,5 +89,27 @@ class ApodFragment : Fragment() {
 
     private fun showToast(massage: String?) {
         Toast.makeText(requireContext(), massage, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setInsets() = with(binding) {
+        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+            appBar.updatePadding(
+                top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            )
+
+            WindowInsetsCompat.CONSUMED
+        }
+    }
+
+    private fun initButtons() = with(binding) {
+        toolbar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.settings -> {
+                    navigate()
+                    true
+                }
+                else -> false
+            }
+        }
     }
 }

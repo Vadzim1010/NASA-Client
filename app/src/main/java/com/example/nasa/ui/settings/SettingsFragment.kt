@@ -5,6 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -32,6 +35,7 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setInsets()
         initButtons()
     }
 
@@ -54,6 +58,16 @@ class SettingsFragment : Fragment() {
 
             viewModel.nightMode = prefsMode
             AppCompatDelegate.setDefaultNightMode(systemMode)
+        }
+    }
+
+    private fun setInsets() = with(binding) {
+        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+            appBar.updatePadding(
+                top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            )
+
+            WindowInsetsCompat.CONSUMED
         }
     }
 

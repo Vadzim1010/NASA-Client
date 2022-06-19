@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -59,6 +62,7 @@ class NasaImagesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setInsets()
         initButtons()
         initSearchListeners()
         initRecycler()
@@ -187,7 +191,7 @@ class NasaImagesFragment : Fragment() {
     }
 
     private fun initButtons() = with(binding) {
-        binding.toolbar.setOnMenuItemClickListener { item ->
+        toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.settings -> {
                     navigate()
@@ -195,6 +199,16 @@ class NasaImagesFragment : Fragment() {
                 }
                 else -> false
             }
+        }
+    }
+
+    private fun setInsets() = with(binding) {
+        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+            appBar.updatePadding(
+                top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            )
+
+            WindowInsetsCompat.CONSUMED
         }
     }
 }
