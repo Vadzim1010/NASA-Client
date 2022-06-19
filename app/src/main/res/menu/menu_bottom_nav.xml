@@ -3,10 +3,17 @@
 
     <item
         android:id="@+id/image_of_day"
+        android:icon="@drawable/ic_baseline_grade_24"
         android:title="@string/image_of_day" />
 
     <item
         android:id="@+id/images_list"
+        android:icon="@drawable/ic_baseline_manage_search_24"
         android:title="@string/search_images" />
+
+    <item
+        android:id="@+id/map"
+        android:icon="@drawable/ic_baseline_map_24"
+        android:title="@string/map"/>
 
 </menu>

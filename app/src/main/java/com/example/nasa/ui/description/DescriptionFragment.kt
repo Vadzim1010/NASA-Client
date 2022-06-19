@@ -61,7 +61,7 @@ class DescriptionFragment : Fragment() {
     }
 
     private fun subscribeOnDataFlow() {
-        viewModel.descriptionFlow
+        viewModel.getDescriptionFlow()
             .onEach(::render)
             .launchIn(viewLifecycleOwner.lifecycleScope)
     }

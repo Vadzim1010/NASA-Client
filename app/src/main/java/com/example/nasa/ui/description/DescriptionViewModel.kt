@@ -2,29 +2,22 @@ package com.example.nasa.ui.description
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.nasa.domain.model.Description
-import com.example.nasa.domain.model.Resource
 import com.example.nasa.domain.usecase.GetDescriptionUseCase
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.*
 
 class DescriptionViewModel(
     private val getDescriptionUseCase: GetDescriptionUseCase,
     val id: String,
 ) : ViewModel() {
 
-    private val _descriptionFlow = MutableSharedFlow<Resource<List<Description>>>(
-        replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
-    val descriptionFlow = _descriptionFlow.asSharedFlow()
+    private val descriptionFlow = MutableStateFlow(Unit)
 
-
-    init {
-        viewModelScope.launch {
-            _descriptionFlow.emitAll(getDescriptionUseCase(id))
-        }
-    }
+    fun getDescriptionFlow() =
+        descriptionFlow
+            .flatMapLatest { getDescriptionUseCase(id) }
+            .shareIn(
+                scope = viewModelScope,
+                started = SharingStarted.Eagerly,
+                replay = 1
+            )
 }

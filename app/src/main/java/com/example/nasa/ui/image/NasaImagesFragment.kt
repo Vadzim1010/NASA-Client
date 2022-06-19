@@ -59,6 +59,7 @@ class NasaImagesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initButtons()
         initSearchListeners()
         initRecycler()
         initSwipeRefresh()
@@ -182,6 +183,18 @@ class NasaImagesFragment : Fragment() {
                     viewModel.onLoadMore(searchQuery, startYear, endYear)
                 }
                 .launchIn(viewLifecycleOwner.lifecycleScope)
+        }
+    }
+
+    private fun initButtons() = with(binding) {
+        binding.toolbar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.settings -> {
+                    navigate()
+                    true
+                }
+                else -> false
+            }
         }
     }
 }

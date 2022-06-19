@@ -16,6 +16,10 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [googleMapKey: googleMapKey]
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -63,11 +67,15 @@ dependencies {
     def coil_version = "1.4.0"
     implementation "io.coil-kt:coil:$coil_version"
 
-    // lifecycle
+    //lifecycle
     def lifecycle_version = "2.4.1"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
 
     //koin
     def koin_version = "3.2.0"
     implementation "io.insert-koin:koin-android:$koin_version"
+
+    //Google map
+    implementation 'com.google.android.gms:play-services-maps:18.0.2'
+    implementation 'com.google.android.gms:play-services-location:20.0.0'
 }

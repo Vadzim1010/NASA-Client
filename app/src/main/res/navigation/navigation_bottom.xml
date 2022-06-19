@@ -15,4 +15,9 @@
         android:name="com.example.nasa.ui.image.NasaImagesFragment"
         tools:layout="@layout/fragment_nasa_images" />
 
+    <fragment
+        android:id="@+id/map"
+        android:name="com.example.nasa.ui.map.MapFragment"
+        tools:layout="@layout/fragment_map" />
+
 </navigation>

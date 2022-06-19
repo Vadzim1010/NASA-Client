@@ -12,8 +12,10 @@ import com.example.nasa.databinding.FragmentBottomNavBinding
 
 class BottomNavFragment : Fragment() {
 
+
     private var _binding: FragmentBottomNavBinding? = null
     private val binding get() = requireNotNull(_binding) { "binding is null $_binding" }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,

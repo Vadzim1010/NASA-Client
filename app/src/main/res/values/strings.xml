@@ -8,4 +8,9 @@
     <string name="max_year">2022</string>
     <string name="image_of_day">Image of day</string>
     <string name="search_images">Search images</string>
+    <string name="map">Map</string>
+    <string name="system">System</string>
+    <string name="dark">Dark</string>
+    <string name="light">Light</string>
+    <string name="settings">Settings</string>
 </resources>

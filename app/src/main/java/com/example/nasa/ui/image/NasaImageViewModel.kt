@@ -23,6 +23,7 @@ class NasaImageViewModel(private val pagingSource: PagingSource) : ViewModel() {
 
     init {
         pagingSource.onLoadMore()
+
         viewModelScope.launch {
             _pagingSourceFlow.emitAll(pagingSource.getNasaImagePage())
         }

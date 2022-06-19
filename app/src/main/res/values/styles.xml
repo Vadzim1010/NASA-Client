@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ColoredTextStyle" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">?colorPrimary</item>
+    </style>
+
+    <style name="ColoredTextStyle.Button">
+        <item name="android:padding">16dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <style name="RadioButtonStyle">
+        <item name="android:button">@null</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:textAppearance">@style/ColoredTextStyle</item>
+        <item name="android:drawableEnd">?android:attr/listChoiceIndicatorSingle</item>
+        <item name="android:textColor">@null</item>
+    </style>
+
+</resources>

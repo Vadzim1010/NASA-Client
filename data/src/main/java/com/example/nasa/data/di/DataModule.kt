@@ -9,5 +9,6 @@ val dataModule = module {
         repositoryModule,
         useCaseModule,
         pagingModule,
+        serviceModule,
     )
 }

@@ -1,4 +1,4 @@
-package com.example.nasa.data.network
+package com.example.nasa.data.network.api
 
 import com.example.nasa.data.model.DescriptionDto
 import com.example.nasa.data.model.NasaImageDto

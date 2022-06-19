@@ -1,7 +1,7 @@
 package com.example.nasa.data.repository
 
 import com.example.nasa.data.network.ApiConfig
-import com.example.nasa.data.network.NasaApi
+import com.example.nasa.data.network.api.NasaApi
 import com.example.nasa.data.util.toDomain
 import com.example.nasa.domain.model.Apod
 import com.example.nasa.domain.repository.RemoteApodRepository
