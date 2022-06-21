@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.*
 
 class DescriptionViewModel(
     private val getDescriptionUseCase: GetDescriptionUseCase,
-    val id: String,
+    private val id: String,
 ) : ViewModel() {
 
     private val descriptionFlow = MutableStateFlow(Unit)

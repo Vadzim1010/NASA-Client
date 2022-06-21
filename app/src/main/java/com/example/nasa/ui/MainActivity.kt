@@ -36,23 +36,23 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     // не разобрался можно ли как то навигацию сделать напрямую из фрагмента ипользуя Bottom Navigation
-    fun navigate(id: String) {
+    fun navigateToDesc(id: String) {
         findNavController(R.id.container).navigate(
             BottomNavFragmentDirections.toDescription(id)
         )
     }
 
-    fun navigate() {
+    fun navigateToSettings() {
         findNavController(R.id.container).navigate(
             BottomNavFragmentDirections.toSettings()
         )
     }
 }
 
-fun Fragment.navigate(id: String) {
-    (requireActivity() as MainActivity).navigate(id)
+fun Fragment.navigateToDesc(id: String) {
+    (requireActivity() as MainActivity).navigateToDesc(id)
 }
 
-fun Fragment.navigate() {
-    (requireActivity() as MainActivity).navigate()
+fun Fragment.navigateToSettings() {
+    (requireActivity() as MainActivity).navigateToSettings()
 }

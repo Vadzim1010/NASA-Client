@@ -1,9 +1,6 @@
 package com.example.nasa.data.di
 
-import com.example.nasa.domain.usecase.GetApodUseCase
-import com.example.nasa.domain.usecase.GetCountriesUseCase
-import com.example.nasa.domain.usecase.GetDescriptionUseCase
-import com.example.nasa.domain.usecase.GetImagePageUseCase
+import com.example.nasa.domain.usecase.*
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
@@ -12,4 +9,5 @@ internal val useCaseModule = module {
     singleOf(::GetDescriptionUseCase)
     singleOf(::GetApodUseCase)
     singleOf(::GetCountriesUseCase)
+    singleOf(::GetCountryDescUseCase)
 }

@@ -15,7 +15,8 @@ class RemoteCountriesRepositoryImpl(
                     Country(
                         name = item.name.common,
                         lat = item.latlng.getOrNull(0) ?: 0.0,
-                        lng = item.latlng.getOrNull(1) ?: 0.0
+                        lng = item.latlng.getOrNull(1) ?: 0.0,
+                        flagImage = item.flags.png,
                     )
                 }
         }

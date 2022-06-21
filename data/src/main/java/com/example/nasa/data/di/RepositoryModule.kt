@@ -15,4 +15,5 @@ internal val repositoryModule = module {
     singleOf(::LocalImagesRepositoryImpl) { bind<LocalImagesRepository>() }
     singleOf(::LocalDescRepositoryImpl) { bind<LocalDescRepository>() }
     singleOf(::LocalApodRepositoryImpl) { bind<LocalApodRepository>() }
+    singleOf(::RemoteCountryFlagRepositoryImpl) { bind<RemoteCountryFlagRepository>() }
 }

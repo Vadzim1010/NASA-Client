@@ -17,7 +17,7 @@ import com.example.nasa.databinding.FragmentApodBinding
 import com.example.nasa.domain.model.Apod
 import com.example.nasa.domain.model.Resource
 import com.example.nasa.domain.util.emptyApod
-import com.example.nasa.ui.navigate
+import com.example.nasa.ui.navigateToSettings
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -105,7 +105,7 @@ class ApodFragment : Fragment() {
         toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.settings -> {
-                    navigate()
+                    navigateToSettings()
                     true
                 }
                 else -> false

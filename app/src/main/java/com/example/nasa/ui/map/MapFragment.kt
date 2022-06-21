@@ -15,10 +15,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.example.nasa.data.network.api.CountriesApi
-import com.example.nasa.data.repository.RemoteCountriesRepositoryImpl
-import com.example.nasa.data.util.log
 import com.example.nasa.databinding.FragmentMapBinding
+import com.example.nasa.domain.model.Resource
+import com.example.nasa.ui.flag.BottomSheetFragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.LocationSource
@@ -28,7 +27,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MapFragment : Fragment() {
@@ -50,7 +48,7 @@ class MapFragment : Fragment() {
         if (permissionGranted) {
             viewLifecycleOwner.lifecycleScope.launch {
                 initGoogleMap()
-                viewModel.getCurrentLocation()?.let { moveCameraToLocation(it) }
+                viewModel.loadCurrentLocation()
                 subscribeLocationUpdates()
             }
         }
@@ -74,7 +72,7 @@ class MapFragment : Fragment() {
 
             permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
 
-
+            subscribeOnCurrentLocation()
             setInsets(view)
         }
     }
@@ -128,15 +126,28 @@ class MapFragment : Fragment() {
             })
 
             viewModel.getCountriesFLow()
-                .onEach { countries ->
-                    countries.forEach {
-                        map.addMarker(LatLng(it.lat, it.lng), it.name)
+                .onEach { resource ->
+                    when (resource) {
+                        is Resource.Success -> {
+                            resource.data?.let { countries ->
+                                countries.forEach {
+                                    map.addMarker(LatLng(it.lat, it.lng), it.name)
+                                }
+                            }
+                        }
+                        is Resource.Error -> {
+                            showToast(resource.throwable?.message ?: "")
+                        }
+                        is Resource.Loading -> {
+                            //no op
+                        }
                     }
                 }
                 .launchIn(viewLifecycleOwner.lifecycleScope)
 
             map.setOnMarkerClickListener { marker ->
-                Toast.makeText(requireContext(), "${marker.title}", Toast.LENGTH_SHORT).show()
+                val bottomSheet = BottomSheetFragment.getInstance(marker.title ?: "")
+                bottomSheet.show(parentFragmentManager, BottomSheetFragment.TAG)
                 true
             }
         }
@@ -147,18 +158,24 @@ class MapFragment : Fragment() {
 
         ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
             val systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.statusBars())
-            val navigationBarInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             mapView.setPadding(
                 systemBarInsets.left,
                 systemBarInsets.top,
                 systemBarInsets.right,
-                navigationBarInsets.bottom
+                systemBarInsets.bottom
             )
 
             WindowInsetsCompat.CONSUMED
         }
     }
 
+    private fun subscribeOnCurrentLocation() {
+        viewModel.getCurrentLocationFlow()
+            .onEach { location ->
+                location?.let { moveCameraToLocation(it) }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+    }
 
     @SuppressLint("MissingPermission")
     private fun subscribeLocationUpdates() {
@@ -195,5 +212,9 @@ class MapFragment : Fragment() {
                     .title(tittle)
                     .position(latLng)
             )
+    }
+
+    private fun showToast(massage: String) {
+        Toast.makeText(requireContext(), massage, Toast.LENGTH_SHORT).show()
     }
 }
