@@ -10,4 +10,55 @@
         android:name="com.example.nasa.ui.BottomNavFragment"
         tools:layout="@layout/fragment_bottom_nav"/>
 
+
+    <fragment
+        android:id="@+id/description"
+        android:name="com.example.nasa.ui.description.DescriptionFragment"
+        tools:layout="@layout/fragment_description">
+
+        <argument
+            android:name="item_id"
+            app:argType="string" />
+
+    </fragment>
+
+    <dialog
+        android:id="@+id/bottom_sheet"
+        android:name="com.example.nasa.ui.flag.BottomSheetFragment"
+        tools:layout="@layout/bottom_sheet">
+
+        <argument
+            android:name="country_name"
+            app:argType="string" />
+
+    </dialog>
+
+    <fragment
+        android:id="@+id/settings"
+        android:name="com.example.nasa.ui.settings.SettingsFragment"
+        tools:layout="@layout/fragement_settings" />
+
+    <action
+        android:id="@+id/to_bottom_sheet"
+        app:destination="@+id/bottom_sheet"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_pop_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+    <action
+        android:id="@+id/to_settings"
+        app:destination="@+id/settings"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_pop_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+    <action
+        android:id="@+id/to_description"
+        app:destination="@id/description"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_pop_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 </navigation>

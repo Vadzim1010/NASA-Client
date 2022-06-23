@@ -16,10 +16,11 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.nasa.NavigationBottomDirections
+import com.example.nasa.NavGraphDirections
+import com.example.nasa.R
 import com.example.nasa.databinding.FragmentMapBinding
 import com.example.nasa.domain.model.Resource
-import com.example.nasa.ui.flag.BottomSheetFragment
+import com.example.nasa.utils.findNavControllerById
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.LocationSource
@@ -149,8 +150,8 @@ class MapFragment : Fragment() {
                 .launchIn(viewLifecycleOwner.lifecycleScope)
 
             map.setOnMarkerClickListener { marker ->
-                findNavController().navigate(
-                    NavigationBottomDirections.toBottomSheet(
+                findNavControllerById(R.id.container).navigate(
+                    NavGraphDirections.toBottomSheet(
                         marker.title ?: ""
                     )
                 )

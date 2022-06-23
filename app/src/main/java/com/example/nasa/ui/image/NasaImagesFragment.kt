@@ -13,9 +13,8 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.nasa.NavigationBottomDirections
+import com.example.nasa.NavGraphDirections
 import com.example.nasa.R
 import com.example.nasa.adapter.NasaImagesAdapter
 import com.example.nasa.data.util.log
@@ -47,7 +46,11 @@ class NasaImagesFragment : Fragment() {
         NasaImagesAdapter(
             context = requireContext(),
             onItemClickListener = { nasaId ->
-                findNavController().navigate(NavigationBottomDirections.toDescription(nasaId))
+                findNavControllerById(R.id.container).navigate(
+                    NavGraphDirections.toDescription(
+                        nasaId
+                    )
+                )
             },
             onReloadClickListener = {
                 viewModel.onRefresh(searchQuery, startYear, endYear)
@@ -238,7 +241,7 @@ class NasaImagesFragment : Fragment() {
         toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.settings -> {
-                    findNavController().navigate(NavigationBottomDirections.toSettings())
+                    findNavControllerById(R.id.container).navigate(NavGraphDirections.toSettings())
                     true
                 }
                 else -> false

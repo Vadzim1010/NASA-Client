@@ -4,9 +4,13 @@ import android.graphics.Rect
 import android.view.View
 import android.widget.EditText
 import androidx.annotation.DimenRes
+import androidx.annotation.IdRes
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nasa.R
@@ -90,6 +94,18 @@ fun EditText.onTextChangedListener() = callbackFlow {
     this.awaitClose {
         this@onTextChangedListener.removeTextChangedListener(watcher)
     }
+}
+
+// find one nav controller by fragment id
+fun Fragment.findNavControllerById(@IdRes id: Int): NavController {
+    var parent = parentFragment
+    while (parent != null) {
+        if (parent is NavHostFragment && parent.id == id) {
+            return parent.navController
+        }
+        parent = parent.parentFragment
+    }
+    throw RuntimeException("NavController with specified id not found")
 }
 
 sealed class SearchStatus() {
