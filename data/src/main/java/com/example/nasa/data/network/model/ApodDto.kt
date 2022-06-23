@@ -1,4 +1,4 @@
-package com.example.nasa.data.model
+package com.example.nasa.data.network.model
 
 internal data class ApodDto(
     val title: String,

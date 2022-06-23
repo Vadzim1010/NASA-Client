@@ -1,7 +1,7 @@
 package com.example.nasa.data.network.api
 
-import com.example.nasa.data.model.CountryDto
-import com.example.nasa.data.model.CountryFlagDto
+import com.example.nasa.data.network.model.CountryDto
+import com.example.nasa.data.network.model.CountryFlagDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 

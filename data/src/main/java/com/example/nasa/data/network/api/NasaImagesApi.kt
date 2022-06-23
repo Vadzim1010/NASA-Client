@@ -1,7 +1,7 @@
 package com.example.nasa.data.network.api
 
-import com.example.nasa.data.model.DescriptionDto
-import com.example.nasa.data.model.NasaImageDto
+import com.example.nasa.data.network.model.DescriptionDto
+import com.example.nasa.data.network.model.NasaImageDto
 import com.example.nasa.domain.util.MEDIA_TYPE
 import retrofit2.http.GET
 import retrofit2.http.Query

@@ -1,9 +1,9 @@
-package com.example.nasa.data.model
+package com.example.nasa.data.network.model
 
 import com.example.nasa.data.network.Collection
 import com.google.gson.annotations.SerializedName
 
-internal data class NasaImageDto(
+internal data class DescriptionDto(
     @SerializedName("collection")
     val collection: Collection
 )

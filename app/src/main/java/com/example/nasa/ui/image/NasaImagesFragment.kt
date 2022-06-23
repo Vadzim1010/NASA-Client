@@ -24,10 +24,7 @@ import com.example.nasa.domain.model.NasaImage
 import com.example.nasa.domain.model.PagingItem
 import com.example.nasa.domain.model.Resource
 import com.example.nasa.domain.util.*
-import com.example.nasa.utils.addBottomSpaceDecorationRes
-import com.example.nasa.utils.addScrollListenerFlow
-import com.example.nasa.utils.onSearchListenerFlow
-import com.example.nasa.utils.onTextChangedListener
+import com.example.nasa.utils.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -188,12 +185,19 @@ class NasaImagesFragment : Fragment() {
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
         toolbar.onSearchListenerFlow()
-            .onEach { text ->
-                searchQuery = text ?: ""
+            .onEach { searchStatus ->
+                when (searchStatus) {
+                    is SearchStatus.QueryTextChange -> {
+                        searchQuery = searchStatus.text
+                    }
+                    is SearchStatus.QueryTextSubmit -> {
+                        searchQuery = searchStatus.text
 
-                viewModel.onReload(searchQuery, startYear, endYear)
-                nasaImagesAdapter.submitList(emptyList())
-                binding.progressCircular.isVisible = true
+                        viewModel.onReload(searchQuery, startYear, endYear)
+                        nasaImagesAdapter.submitList(emptyList())
+                        binding.progressCircular.isVisible = true
+                    }
+                }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
     }
@@ -223,6 +227,14 @@ class NasaImagesFragment : Fragment() {
     }
 
     private fun initButtons() = with(binding) {
+        searchButton.setOnClickListener {
+            log("$searchQuery $startYear")
+
+            viewModel.onReload(searchQuery, startYear, endYear)
+            nasaImagesAdapter.submitList(emptyList())
+            binding.progressCircular.isVisible = true
+        }
+
         toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.settings -> {

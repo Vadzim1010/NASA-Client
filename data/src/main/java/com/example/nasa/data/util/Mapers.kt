@@ -5,7 +5,7 @@ import com.example.nasa.data.database.entity.ApodEntity
 import com.example.nasa.data.database.entity.DescriptionEntity
 import com.example.nasa.data.database.entity.ImageDescriptionEntity
 import com.example.nasa.data.database.entity.NasaImageEntity
-import com.example.nasa.data.model.*
+import com.example.nasa.data.network.model.*
 import com.example.nasa.data.network.NasaApodResponse
 import com.example.nasa.domain.model.*
 import kotlinx.coroutines.flow.Flow

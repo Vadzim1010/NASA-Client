@@ -60,14 +60,16 @@ fun Toolbar.onSearchListenerFlow() = callbackFlow {
 
     val queryTextListener = object : SearchView.OnQueryTextListener {
         override fun onQueryTextSubmit(query: String?): Boolean {
-            this@callbackFlow.trySend(query)
+            this@callbackFlow.trySend(SearchStatus.QueryTextSubmit(query ?: ""))
             return true
         }
 
         override fun onQueryTextChange(newText: String?): Boolean {
             // to not start search with empty query when init search line
             if (isSearchStarted && newText.isNullOrBlank()) {
-                this@callbackFlow.trySend(newText)
+                this@callbackFlow.trySend(SearchStatus.QueryTextSubmit(newText ?: ""))
+            } else {
+                this@callbackFlow.trySend(SearchStatus.QueryTextChange(newText ?: ""))
             }
             isSearchStarted = true
             return true
@@ -88,4 +90,9 @@ fun EditText.onTextChangedListener() = callbackFlow {
     this.awaitClose {
         this@onTextChangedListener.removeTextChangedListener(watcher)
     }
+}
+
+sealed class SearchStatus() {
+    data class QueryTextChange(val text: String) : SearchStatus()
+    data class QueryTextSubmit(val text: String) : SearchStatus()
 }

@@ -1,4 +1,4 @@
-package com.example.nasa.data.model
+package com.example.nasa.data.network.model
 
 import com.example.nasa.data.network.Name
 import com.google.gson.annotations.SerializedName
