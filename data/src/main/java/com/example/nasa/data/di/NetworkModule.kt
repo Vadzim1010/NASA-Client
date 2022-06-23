@@ -1,6 +1,6 @@
 package com.example.nasa.data.di
 
-import com.example.nasa.data.network.ApiConfig
+import com.example.nasa.data.BuildConfig
 import com.example.nasa.data.network.api.CountriesApi
 import com.example.nasa.data.network.api.NasaApi
 import com.example.nasa.data.network.api.NasaImagesApi
@@ -30,21 +30,21 @@ internal val networkModule = module {
 
     single {
         get<Retrofit.Builder>()
-            .baseUrl(ApiConfig.NASA_IMAGES_ENDPOINT)
+            .baseUrl(BuildConfig.NASA_IMAGES_ENDPOINT)
             .build()
             .create<NasaImagesApi>()
     }
 
     single {
         get<Retrofit.Builder>()
-            .baseUrl(ApiConfig.NASA_ENDPOINT)
+            .baseUrl(BuildConfig.NASA_ENDPOINT)
             .build()
             .create<NasaApi>()
     }
 
     single {
         get<Retrofit.Builder>()
-            .baseUrl(ApiConfig.COUNTRIES_ENDPOINT)
+            .baseUrl(BuildConfig.COUNTRIES_ENDPOINT)
             .build()
             .create<CountriesApi>()
     }

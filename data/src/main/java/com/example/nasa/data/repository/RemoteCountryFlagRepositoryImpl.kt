@@ -1,6 +1,8 @@
 package com.example.nasa.data.repository
 
 import com.example.nasa.data.network.api.CountriesApi
+import com.example.nasa.data.util.emptyCountryFlag
+import com.example.nasa.data.util.toDomain
 import com.example.nasa.domain.model.CountryFlag
 import com.example.nasa.domain.repository.RemoteCountryFlagRepository
 
@@ -11,11 +13,8 @@ class RemoteCountryFlagRepositoryImpl(
 
     override suspend fun getCountryByName(name: String): Result<CountryFlag> =
         runCatching {
-            val response = countriesApi.getCountryByName(name)
-
-            CountryFlag(
-                countryName = response.getOrNull(0)?.name?.common ?: "",
-                flagImageUrl = response.getOrNull(0)?.flags?.png ?: "",
-            )
+            countriesApi.getCountryByName(name)
+                .getOrNull(0)
+                ?.toDomain() ?: emptyCountryFlag()
         }
 }

@@ -5,13 +5,9 @@ import com.example.nasa.data.database.entity.ApodEntity
 import com.example.nasa.data.database.entity.DescriptionEntity
 import com.example.nasa.data.database.entity.ImageDescriptionEntity
 import com.example.nasa.data.database.entity.NasaImageEntity
-import com.example.nasa.data.model.ApodDto
-import com.example.nasa.data.model.DescriptionDto
-import com.example.nasa.data.model.NasaImageDto
+import com.example.nasa.data.model.*
 import com.example.nasa.data.network.NasaApodResponse
-import com.example.nasa.domain.model.Apod
-import com.example.nasa.domain.model.Description
-import com.example.nasa.domain.model.NasaImage
+import com.example.nasa.domain.model.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.*
@@ -28,6 +24,14 @@ internal fun Flow<List<ImageDescriptionEntity>>.mapDescToDomain(): Flow<List<Des
 internal fun Flow<List<ApodEntity>>.mapApodToDomain(): Flow<List<Apod>> =
     this.map { list -> list.map { it.toDomain() } }
 
+internal fun List<CountryDto>.mapToDomain(): List<Country> =
+    this.map { item ->
+        Country(
+            name = item.name.common,
+            lat = item.latlng.getOrNull(0) ?: 0.0,
+            lng = item.latlng.getOrNull(1) ?: 0.0,
+        )
+    }
 
 internal fun NasaImageDto.mapToDomain(): List<NasaImage> = this
     .collection
@@ -110,11 +114,12 @@ internal fun NasaImageEntity.toDomain() = NasaImage(
 )
 
 
-internal fun NasaApodResponse.toDomain(): Apod = ApodDto(
-    title = this.title,
-    date = this.date,
-    imageUrl = this.url
-).toDomain()
+internal fun NasaApodResponse.toDomain(): Apod =
+    ApodDto(
+        title = this.title,
+        date = this.date,
+        imageUrl = this.url
+    ).toDomain()
 
 
 internal fun ApodDto.toDomain() = Apod(
@@ -123,6 +128,14 @@ internal fun ApodDto.toDomain() = Apod(
     imageUrl = imageUrl
 )
 
+internal fun CountryFlagDto.toDomain() =
+    CountryFlag(
+        countryName = this.name.common,
+        flagImageUrl = this.flags.png,
+    )
+
+internal fun emptyCountryFlag() =
+    CountryFlag("", "")
 
 fun log(message: String) {
     Log.i("ProjectNasa", message)

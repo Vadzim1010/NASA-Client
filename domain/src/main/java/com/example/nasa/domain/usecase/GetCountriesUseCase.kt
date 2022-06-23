@@ -4,6 +4,7 @@ import com.example.nasa.domain.model.Country
 import com.example.nasa.domain.model.Resource
 import com.example.nasa.domain.repository.RemoteCountriesRepository
 import kotlinx.coroutines.flow.flow
+import kotlin.math.log
 
 class GetCountriesUseCase(private val remoteRepository: RemoteCountriesRepository) {
 
@@ -11,7 +12,10 @@ class GetCountriesUseCase(private val remoteRepository: RemoteCountriesRepositor
         remoteRepository.getCountries()
             .fold(
                 onSuccess = { emit(Resource.Success(it)) },
-                onFailure = { emit(Resource.Error(throwable = it)) }
+                onFailure = {
+                    println(it)
+                    emit(Resource.Error(throwable = it))
+                }
             )
     }
 }

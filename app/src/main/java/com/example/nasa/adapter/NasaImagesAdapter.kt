@@ -17,7 +17,8 @@ import com.example.nasa.domain.model.PagingItem
 
 class NasaImagesAdapter(
     context: Context,
-    private val onClickListener: (String) -> Unit,
+    private val onItemClickListener: (String) -> Unit,
+    private val onReloadClickListener: () -> Unit,
 ) : ListAdapter<PagingItem<NasaImage>, RecyclerView.ViewHolder>(DIF_UTIL) {
 
 
@@ -37,7 +38,7 @@ class NasaImagesAdapter(
             TYPE_CONTENT -> {
                 NasaImageViewHolder(
                     ItemNasaImageBinding.inflate(layoutInflater, parent, false),
-                    onClickListener,
+                    onItemClickListener,
                 )
             }
             TYPE_LOADING -> {
@@ -47,7 +48,8 @@ class NasaImagesAdapter(
             }
             TYPE_ERROR -> {
                 ErrorViewHolder(
-                    ItemErrorBinding.inflate(layoutInflater, parent, false)
+                    ItemErrorBinding.inflate(layoutInflater, parent, false),
+                    onReloadClickListener,
                 )
             }
             else -> {
@@ -84,8 +86,8 @@ class NasaImagesAdapter(
                 oldItem: PagingItem<NasaImage>,
                 newItem: PagingItem<NasaImage>
             ): Boolean {
-                val oldContent = oldItem as? PagingItem.Content ?: return false
-                val newContent = newItem as? PagingItem.Content ?: return false
+                val oldContent = oldItem as? PagingItem.Content ?: return true
+                val newContent = newItem as? PagingItem.Content ?: return true
 
                 return oldContent.data.id == newContent.data.id
             }

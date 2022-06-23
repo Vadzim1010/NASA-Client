@@ -13,4 +13,8 @@
     <string name="dark">Dark</string>
     <string name="light">Light</string>
     <string name="settings">Settings</string>
+    <string name="no_data">Nothing was found according to your request</string>
+    <string name="try_again">try again</string>
+    <string name="try_reload">try reload</string>
+    <string name="flag">flag</string>
 </resources>

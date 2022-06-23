@@ -49,15 +49,13 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
                         is Resource.Success -> {
                             progressCircular.isVisible = false
 
-                            log(countryDesc.toString())
+                            countryName.text = countryDesc.data?.countryName ?: ""
                             image.load(countryDesc.data?.flagImageUrl)
-                            log(countryDesc.toString())
                         }
                         is Resource.Error -> {
                             showToast(countryDesc.throwable?.message ?: "")
                         }
                         is Resource.Loading -> {
-                            log(countryDesc.toString())
                             progressCircular.isVisible = true
                         }
                     }

@@ -1,15 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/error_message"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center"
-    android:minHeight="56dp"
-    android:padding="4dp"
-    android:textAllCaps="true"
-    android:textAppearance="?textAppearanceSubtitle1"
-    android:textColor="?colorError"
-    tools:text="Unknown error"
-    />
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/error_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:minHeight="56dp"
+        android:padding="4dp"
+        android:textAllCaps="true"
+        android:textAppearance="?textAppearanceSubtitle1"
+        android:textColor="?colorError"
+        tools:text="Unknown error" />
+
+    <Button
+        android:id="@+id/reload_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/try_reload" />
+
+</LinearLayout>

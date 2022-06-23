@@ -29,6 +29,9 @@ class NasaImageViewModel(private val pagingSource: PagingSource) : ViewModel() {
         }
     }
 
+    fun onReload(searchQuery: String, yearStart: Int, yearEnd: Int) {
+        pagingSource.onReload(searchQuery, yearStart, yearEnd)
+    }
 
     fun onRefresh(searchQuery: String, yearStart: Int, yearEnd: Int) {
         pagingSource.onRefresh(searchQuery, yearStart, yearEnd)

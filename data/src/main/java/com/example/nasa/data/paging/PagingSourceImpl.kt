@@ -9,7 +9,6 @@ import com.example.nasa.domain.usecase.GetImagePageUseCase
 import com.example.nasa.domain.util.MAX_PAGE
 import com.example.nasa.domain.util.PAGE_SIZE
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 
 
@@ -45,13 +44,27 @@ internal class PagingSourceImpl(
     }
 
     override fun onRefresh(searchQuery: String, yearStart: Int, yearEnd: Int) {
-        loadStateFlow.tryEmit(
-            LoadState.Refresh(
-                searchQuery = searchQuery,
-                yearStart = yearStart,
-                yearEnd = yearEnd,
+        if (!isLoading) {
+            loadStateFlow.tryEmit(
+                LoadState.Refresh(
+                    searchQuery = searchQuery,
+                    yearStart = yearStart,
+                    yearEnd = yearEnd,
+                )
             )
-        )
+        }
+    }
+
+    override fun onReload(searchQuery: String, yearStart: Int, yearEnd: Int) {
+        if (!isLoading) {
+            loadStateFlow.tryEmit(
+                LoadState.Reload(
+                    searchQuery = searchQuery,
+                    yearStart = yearStart,
+                    yearEnd = yearEnd,
+                )
+            )
+        }
     }
 
     override fun getNasaImagePage(): Flow<Resource<List<NasaImage>>> = loadStateFlow
@@ -61,7 +74,7 @@ internal class PagingSourceImpl(
             log("page $currentPage")
             log("search params is: ${loadState.searchQuery} ${loadState.yearStart} ${loadState.yearEnd}")
 
-            if (loadState is LoadState.Refresh) {
+            if (loadState is LoadState.Reload) {
                 currentPage = 1
             }
         }

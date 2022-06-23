@@ -15,6 +15,8 @@ interface PagingSource {
         yearEnd: Int = MAX_YEAR
     )
 
+    fun onReload(searchQuery: String, yearStart: Int, yearEnd: Int)
+
     fun onRefresh(searchQuery: String, yearStart: Int, yearEnd: Int)
 
     fun getNasaImagePage(): Flow<Resource<List<NasaImage>>>

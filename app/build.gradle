@@ -80,10 +80,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:18.0.2'
     implementation 'com.google.android.gms:play-services-location:20.0.0'
 
+    //bottom sheet
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
-
-//    //bottom sheet
-//    implementation 'com.androidx.support:appcompat-v7:1.1.1'
-//    implementation 'com.androidx.support:design:1.1.1'
 }

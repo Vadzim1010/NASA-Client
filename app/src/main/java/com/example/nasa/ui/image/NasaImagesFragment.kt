@@ -1,9 +1,12 @@
 package com.example.nasa.ui.image
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.buildSpannedString
+import androidx.core.text.color
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -37,17 +40,22 @@ class NasaImagesFragment : Fragment() {
 
     private val viewModel by viewModel<NasaImageViewModel>()
 
-    private val nasaImagesAdapter by lazy {
-        NasaImagesAdapter(requireContext()) { nasaId ->
-            findNavController().navigate(NavigationBottomDirections.toDescription(nasaId))
-        }
-    }
-
     private var startYear = MIN_YEAR
 
     private var endYear = MAX_YEAR
 
     private var searchQuery = DEFAULT_SEARCH_QUERY
+
+    private val nasaImagesAdapter by lazy {
+        NasaImagesAdapter(
+            context = requireContext(),
+            onItemClickListener = { nasaId ->
+                findNavController().navigate(NavigationBottomDirections.toDescription(nasaId))
+            },
+            onReloadClickListener = {
+                viewModel.onRefresh(searchQuery, startYear, endYear)
+            })
+    }
 
 
     override fun onCreateView(
@@ -99,6 +107,13 @@ class NasaImagesFragment : Fragment() {
                 progressCircular.isVisible = false
                 swipeRefresh.isRefreshing = false
 
+                if (imageList.isEmpty()) {
+                    noDataInfoTextView.isVisible = true
+                    noDataInfoTextView.text = getString(R.string.no_data)
+                } else {
+                    noDataInfoTextView.isVisible = false
+                }
+
                 val pagingList =
                     if (totalHits > imageList.size || imageList.size >= MAX_PAGE * PAGE_SIZE) {
                         imageList.mapToPage
@@ -113,14 +128,30 @@ class NasaImagesFragment : Fragment() {
                 progressCircular.isVisible = false
                 swipeRefresh.isRefreshing = false
 
-                val pagingList = imageList.mapToPage
-                    .plus(throwable
-                        ?.let { PagingItem.Error(it) })
+                if (imageList.isEmpty()) {
+                    noDataInfoTextView.isVisible = true
+                    noDataInfoTextView.text = buildSpannedString {
+                        color(Color.RED) {
+                            append(throwable?.message)
+                        }
+                    }
+                } else {
+                    noDataInfoTextView.isVisible = false
+                }
+
+                val pagingList = if (imageList.isNotEmpty()) {
+                    imageList.mapToPage
+                        .plus(throwable
+                            ?.let { PagingItem.Error(it) })
+                } else {
+                    imageList.mapToPage
+                }
 
                 nasaImagesAdapter.submitList(pagingList)
             }
             is Resource.Loading -> {
                 progressCircular.isVisible = imageList.isNullOrEmpty()
+                noDataInfoTextView.isVisible = false
 
                 if (imageList.size > nasaImagesAdapter.currentList.size) {
                     nasaImagesAdapter.submitList(imageList.mapToPage)
@@ -160,7 +191,7 @@ class NasaImagesFragment : Fragment() {
             .onEach { text ->
                 searchQuery = text ?: ""
 
-                viewModel.onRefresh(searchQuery, startYear, endYear)
+                viewModel.onReload(searchQuery, startYear, endYear)
                 nasaImagesAdapter.submitList(emptyList())
                 binding.progressCircular.isVisible = true
             }
