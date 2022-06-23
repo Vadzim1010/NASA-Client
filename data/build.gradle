@@ -13,7 +13,9 @@ android {
         def NASA_ENDPOINT = 'NASA_ENDPOINT'
         def NASA_IMAGES_ENDPOINT = 'NASA_IMAGES_ENDPOINT'
         def COUNTRIES_ENDPOINT = 'COUNTRIES_ENDPOINT'
+        def NASA_API_KEY = 'NASA_API_KEY'
 
+        buildConfigField "String", NASA_API_KEY, nasaApiKey
         buildConfigField "String", NASA_ENDPOINT, nasaUrl
         buildConfigField "String", NASA_IMAGES_ENDPOINT, nasaImagesUrl
         buildConfigField "String", COUNTRIES_ENDPOINT, countriesUrl
