@@ -10,10 +10,9 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.nasa.NavigationBottomDirections
 import com.example.nasa.R
 import com.example.nasa.adapter.NasaImagesAdapter
 import com.example.nasa.data.util.log
@@ -22,9 +21,6 @@ import com.example.nasa.domain.model.NasaImage
 import com.example.nasa.domain.model.PagingItem
 import com.example.nasa.domain.model.Resource
 import com.example.nasa.domain.util.*
-import com.example.nasa.ui.BottomNavFragmentDirections
-import com.example.nasa.ui.navigateToDesc
-import com.example.nasa.ui.navigateToSettings
 import com.example.nasa.utils.addBottomSpaceDecorationRes
 import com.example.nasa.utils.addScrollListenerFlow
 import com.example.nasa.utils.onSearchListenerFlow
@@ -43,7 +39,7 @@ class NasaImagesFragment : Fragment() {
 
     private val nasaImagesAdapter by lazy {
         NasaImagesAdapter(requireContext()) { nasaId ->
-            navigateToDesc(nasaId)
+            findNavController().navigate(NavigationBottomDirections.toDescription(nasaId))
         }
     }
 
@@ -199,7 +195,7 @@ class NasaImagesFragment : Fragment() {
         toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.settings -> {
-                    navigateToSettings()
+                    findNavController().navigate(NavigationBottomDirections.toSettings())
                     true
                 }
                 else -> false

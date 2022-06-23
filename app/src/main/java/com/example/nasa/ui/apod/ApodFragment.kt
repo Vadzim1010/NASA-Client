@@ -11,13 +11,14 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import coil.load
+import com.example.nasa.NavigationBottomDirections
 import com.example.nasa.R
 import com.example.nasa.databinding.FragmentApodBinding
 import com.example.nasa.domain.model.Apod
 import com.example.nasa.domain.model.Resource
 import com.example.nasa.domain.util.emptyApod
-import com.example.nasa.ui.navigateToSettings
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -105,7 +106,7 @@ class ApodFragment : Fragment() {
         toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.settings -> {
-                    navigateToSettings()
+                    findNavController().navigate(NavigationBottomDirections.toSettings())
                     true
                 }
                 else -> false

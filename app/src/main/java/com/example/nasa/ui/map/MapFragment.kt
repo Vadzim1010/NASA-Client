@@ -15,6 +15,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.example.nasa.NavigationBottomDirections
 import com.example.nasa.databinding.FragmentMapBinding
 import com.example.nasa.domain.model.Resource
 import com.example.nasa.ui.flag.BottomSheetFragment
@@ -39,6 +41,7 @@ class MapFragment : Fragment() {
     private var googleMap: GoogleMap? = null
 
     private var locationListener: LocationSource.OnLocationChangedListener? = null
+
 
     @SuppressLint("MissingPermission")
     private val permissionLauncher = registerForActivityResult(
@@ -146,8 +149,11 @@ class MapFragment : Fragment() {
                 .launchIn(viewLifecycleOwner.lifecycleScope)
 
             map.setOnMarkerClickListener { marker ->
-                val bottomSheet = BottomSheetFragment.getInstance(marker.title ?: "")
-                bottomSheet.show(parentFragmentManager, BottomSheetFragment.TAG)
+                findNavController().navigate(
+                    NavigationBottomDirections.toBottomSheet(
+                        marker.title ?: ""
+                    )
+                )
                 true
             }
         }

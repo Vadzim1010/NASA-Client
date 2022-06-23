@@ -8,56 +8,6 @@
     <fragment
         android:id="@+id/bottom_navigation"
         android:name="com.example.nasa.ui.BottomNavFragment"
-        tools:layout="@layout/fragment_bottom_nav">
-
-<!--        <action-->
-<!--            android:id="@+id/to_description"-->
-<!--            app:destination="@id/date"-->
-<!--            app:enterAnim="@anim/nav_default_enter_anim"-->
-<!--            app:exitAnim="@anim/nav_default_pop_exit_anim"-->
-<!--            app:popEnterAnim="@anim/nav_default_pop_enter_anim"-->
-<!--            app:popExitAnim="@anim/nav_default_pop_exit_anim" />-->
-
-        <action
-            android:id="@+id/to_settings"
-            app:destination="@+id/settings"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_pop_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-
-        <action
-            android:id="@+id/to_country_desc"
-            app:destination="@+id/country_desc"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_pop_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/date"
-        android:name="com.example.nasa.ui.description.DescriptionFragment"
-        tools:layout="@layout/fragment_description">
-
-        <argument
-            android:name="item_id"
-            app:argType="string" />
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/settings"
-        android:name="com.example.nasa.ui.settings.SettingsFragment"
-        tools:layout="@layout/fragement_settings" />
-
-    <action
-        android:id="@+id/to_description"
-        app:destination="@id/date"
-        app:enterAnim="@anim/nav_default_enter_anim"
-        app:exitAnim="@anim/nav_default_pop_exit_anim"
-        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        tools:layout="@layout/fragment_bottom_nav"/>
 
 </navigation>

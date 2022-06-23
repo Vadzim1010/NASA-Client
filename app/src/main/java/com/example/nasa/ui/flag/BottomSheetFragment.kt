@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import coil.load
 import com.example.nasa.data.util.log
 import com.example.nasa.databinding.BottomSheetBinding
@@ -18,15 +19,15 @@ import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-class BottomSheetFragment private constructor() : BottomSheetDialogFragment() {
+class BottomSheetFragment : BottomSheetDialogFragment() {
 
 
     private var _binding: BottomSheetBinding? = null
     private val binding get() = requireNotNull(_binding) { "binding is $_binding" }
 
-    private val name by lazy { requireArguments().getString(NAME_KEY) }
+    private val args by navArgs<BottomSheetFragmentArgs>()
 
-    private val viewModel by viewModel<BottomSheetViewModel> { parametersOf(name) }
+    private val viewModel by viewModel<BottomSheetViewModel> { parametersOf(args.countryName) }
 
 
     override fun onCreateView(
@@ -72,17 +73,5 @@ class BottomSheetFragment private constructor() : BottomSheetDialogFragment() {
 
     private fun showToast(massage: String) {
         Toast.makeText(requireContext(), massage, Toast.LENGTH_SHORT).show()
-    }
-
-    companion object {
-        const val TAG = "ModalBottomSheet"
-
-        private const val NAME_KEY = "name_key"
-
-        fun getInstance(name: String): BottomSheetFragment {
-            return BottomSheetFragment().apply {
-                arguments = bundleOf(NAME_KEY to name)
-            }
-        }
     }
 }

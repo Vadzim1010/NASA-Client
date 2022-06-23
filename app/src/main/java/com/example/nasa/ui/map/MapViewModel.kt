@@ -4,9 +4,7 @@ import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nasa.data.service.location.LocationService
-import com.example.nasa.domain.model.CountryFlag
 import com.example.nasa.domain.usecase.GetCountriesUseCase
-import com.example.nasa.domain.usecase.GetCountryDescUseCase
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
@@ -45,9 +43,9 @@ class MapViewModel(
             replay = 1
         )
 
+    fun getLocationFlow() = locationService.getLocationFlow()
+
     fun loadCurrentLocation() {
         locationFlow.tryEmit(Unit)
     }
-
-    fun getLocationFlow() = locationService.getLocationFlow()
 }
