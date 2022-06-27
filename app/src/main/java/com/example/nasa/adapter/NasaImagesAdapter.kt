@@ -17,8 +17,8 @@ import com.example.nasa.domain.model.PagingItem
 
 class NasaImagesAdapter(
     context: Context,
-    private val onItemClickListener: (String) -> Unit,
-    private val onReloadClickListener: () -> Unit,
+    private val onCardClicked: (String) -> Unit,
+    private val onReloadButtonClicked: () -> Unit,
 ) : ListAdapter<PagingItem<NasaImage>, RecyclerView.ViewHolder>(DIF_UTIL) {
 
 
@@ -38,7 +38,7 @@ class NasaImagesAdapter(
             TYPE_CONTENT -> {
                 NasaImageViewHolder(
                     ItemNasaImageBinding.inflate(layoutInflater, parent, false),
-                    onItemClickListener,
+                    onCardClicked,
                 )
             }
             TYPE_LOADING -> {
@@ -49,7 +49,7 @@ class NasaImagesAdapter(
             TYPE_ERROR -> {
                 ErrorViewHolder(
                     ItemErrorBinding.inflate(layoutInflater, parent, false),
-                    onReloadClickListener,
+                    onReloadButtonClicked,
                 )
             }
             else -> {

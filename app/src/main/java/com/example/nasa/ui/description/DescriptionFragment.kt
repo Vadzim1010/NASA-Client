@@ -15,6 +15,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.setupWithNavController
 import coil.load
+import coil.size.Scale
+import com.example.nasa.data.util.log
 import com.example.nasa.databinding.FragmentDescriptionBinding
 import com.example.nasa.domain.model.Description
 import com.example.nasa.domain.model.Resource
@@ -80,19 +82,24 @@ class DescriptionFragment : Fragment() {
         when (resource) {
             is Resource.Success -> {
                 progressCircular.isVisible = false
+                log("load internet")
             }
             is Resource.Error -> {
                 progressCircular.isVisible = false
                 showToast(throwable?.message ?: "")
+                log("load failed")
             }
             is Resource.Loading -> {
                 progressCircular.isVisible = data?.firstOrNull()?.description.isNullOrEmpty()
+                log("load cache from db")
             }
         }
     }
 
     private fun renderData(imageDescription: Description) = with(binding) {
-        image.load(imageDescription.imageUrl)
+        image.load(imageDescription.imageUrl) {
+            scale(scale = Scale.FIT)
+        }
         title.text = imageDescription.title
         description.text = imageDescription.description
     }
@@ -104,7 +111,11 @@ class DescriptionFragment : Fragment() {
     private fun setInsets() = with(binding) {
         ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
             appBar.updatePadding(
-                top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+                top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top,
+            )
+            root.updatePadding(
+                left = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).left,
+                right = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).right,
             )
 
             WindowInsetsCompat.CONSUMED

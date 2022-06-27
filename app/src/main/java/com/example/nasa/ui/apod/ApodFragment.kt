@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import coil.load
 import com.example.nasa.NavGraphDirections
 import com.example.nasa.R
+import com.example.nasa.data.util.log
 import com.example.nasa.databinding.FragmentApodBinding
 import com.example.nasa.domain.model.Apod
 import com.example.nasa.domain.model.Resource
@@ -72,13 +73,16 @@ class ApodFragment : Fragment() {
         when (resource) {
             is Resource.Success -> {
                 progressCircular.isVisible = false
+                log("load internet")
             }
             is Resource.Error -> {
                 progressCircular.isVisible = false
                 showToast(throwable?.message ?: "")
+                log("load failed")
             }
             is Resource.Loading -> {
                 progressCircular.isVisible = data.isNullOrEmpty()
+                log("load cache from db")
             }
         }
     }
@@ -96,7 +100,11 @@ class ApodFragment : Fragment() {
     private fun setInsets() = with(binding) {
         ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
             appBar.updatePadding(
-                top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+                top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top,
+            )
+            root.updatePadding(
+                left = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).left,
+                right = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).right,
             )
 
             WindowInsetsCompat.CONSUMED

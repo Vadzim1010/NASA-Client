@@ -1,8 +1,7 @@
-package com.example.nasa.ui.flag
+package com.example.nasa.ui.map.flag
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.nasa.data.util.log
 import com.example.nasa.domain.usecase.GetCountryDescUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

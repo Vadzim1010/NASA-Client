@@ -9,6 +9,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.nasa.R
 import com.example.nasa.databinding.FragmentBottomNavBinding
+import com.example.nasa.utils.findNavControllerById
+import com.example.nasa.utils.findNestedController
 
 class BottomNavFragment : Fragment() {
 
@@ -31,10 +33,7 @@ class BottomNavFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            val nestedController =
-                (childFragmentManager.findFragmentById(R.id.page_container) as NavHostFragment)
-                    .navController
-            bottomNavigation.setupWithNavController(nestedController)
+            bottomNavigation.setupWithNavController(findNestedController())
         }
     }
 

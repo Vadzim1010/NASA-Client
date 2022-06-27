@@ -13,8 +13,12 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavArgs
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nasa.NavGraphDirections
+import com.example.nasa.NavigationBottomDirections
 import com.example.nasa.R
 import com.example.nasa.adapter.NasaImagesAdapter
 import com.example.nasa.data.util.log
@@ -22,11 +26,16 @@ import com.example.nasa.databinding.FragmentNasaImagesBinding
 import com.example.nasa.domain.model.NasaImage
 import com.example.nasa.domain.model.PagingItem
 import com.example.nasa.domain.model.Resource
+import com.example.nasa.domain.model.SearchParams
 import com.example.nasa.domain.util.*
-import com.example.nasa.utils.*
+import com.example.nasa.utils.addBottomSpaceDecorationRes
+import com.example.nasa.utils.addScrollListenerFlow
+import com.example.nasa.utils.findNavControllerById
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
+
 
 class NasaImagesFragment : Fragment() {
 
@@ -34,26 +43,34 @@ class NasaImagesFragment : Fragment() {
     private var _binding: FragmentNasaImagesBinding? = null
     private val binding get() = requireNotNull(_binding) { "binding is $_binding" }
 
+    private val args by navArgs<NasaImagesFragmentArgs>()
+
+    private val searchParams by lazy {
+        args.searchParams ?: SearchParams(
+            query = viewModel.searchParams.query,
+            startYear = viewModel.searchParams.startYear,
+            endYear = viewModel.searchParams.endYear,
+        )
+    }
+
     private val viewModel by viewModel<NasaImageViewModel>()
-
-    private var startYear = MIN_YEAR
-
-    private var endYear = MAX_YEAR
-
-    private var searchQuery = DEFAULT_SEARCH_QUERY
 
     private val nasaImagesAdapter by lazy {
         NasaImagesAdapter(
             context = requireContext(),
-            onItemClickListener = { nasaId ->
+            onCardClicked = { nasaId ->
                 findNavControllerById(R.id.container).navigate(
                     NavGraphDirections.toDescription(
                         nasaId
                     )
                 )
             },
-            onReloadClickListener = {
-                viewModel.onRefresh(searchQuery, startYear, endYear)
+            onReloadButtonClicked = {
+                viewModel.onRefresh(
+                    searchParams.query,
+                    searchParams.startYear,
+                    searchParams.endYear
+                )
             })
     }
 
@@ -73,7 +90,6 @@ class NasaImagesFragment : Fragment() {
 
         setInsets()
         initButtons()
-        initSearchListeners()
         initRecycler()
         initSwipeRefresh()
         subscribeOnDataFlow()
@@ -99,13 +115,13 @@ class NasaImagesFragment : Fragment() {
         val throwable = resource.throwable
         val totalHits = imageList.lastOrNull()?.totalHits ?: 0
 
-        log("content size: ${imageList.size}")
-        log("total content length: $totalHits")
-
         when (resource) {
             is Resource.Success -> {
                 progressCircular.isVisible = false
                 swipeRefresh.isRefreshing = false
+
+                log("content size: ${imageList.size}")
+                log("total content length: $totalHits")
 
                 if (imageList.isEmpty()) {
                     noDataInfoTextView.isVisible = true
@@ -127,6 +143,9 @@ class NasaImagesFragment : Fragment() {
             is Resource.Error -> {
                 progressCircular.isVisible = false
                 swipeRefresh.isRefreshing = false
+
+                log("content size: ${imageList.size}")
+                log("total content length: $totalHits")
 
                 if (imageList.isEmpty()) {
                     noDataInfoTextView.isVisible = true
@@ -160,57 +179,13 @@ class NasaImagesFragment : Fragment() {
         }
     }
 
-    private fun initSearchListeners() = with(binding) {
-        yearStartEditText.onTextChangedListener()
-            .onEach { year ->
-                startYear = year
-                    ?.toString()
-                    ?.toIntOrNull()
-                    ?.takeIf { it in MIN_YEAR until MAX_YEAR }
-                    ?.also { yearStartEditContainer.error = "" } ?: run {
-                    yearStartEditContainer.error = "incorrect format"
-                    0
-                }
-            }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
 
-        yearEndEditText.onTextChangedListener()
-            .onEach { year ->
-                endYear = year
-                    ?.toString()
-                    ?.toIntOrNull()
-                    ?.takeIf { it in MIN_YEAR + 1..MAX_YEAR }
-                    ?.also { yearEndEditContainer.error = "" } ?: run {
-                    yearEndEditContainer.error = "incorrect format"
-                    0
-                }
-            }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
-
-        toolbar.onSearchListenerFlow()
-            .onEach { searchStatus ->
-                when (searchStatus) {
-                    is SearchStatus.QueryTextChange -> {
-                        searchQuery = searchStatus.text
-                    }
-                    is SearchStatus.QueryTextSubmit -> {
-                        searchQuery = searchStatus.text
-
-                        viewModel.onReload(searchQuery, startYear, endYear)
-                        nasaImagesAdapter.submitList(emptyList())
-                        binding.progressCircular.isVisible = true
-                    }
-                }
-            }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
+    private fun initSwipeRefresh() = with(binding) {
+        swipeRefresh.setOnRefreshListener {
+            viewModel.onReload(searchParams.query, searchParams.startYear, searchParams.endYear)
+        }
     }
 
-    private fun initSwipeRefresh() =
-        with(binding) {
-            swipeRefresh.setOnRefreshListener {
-                viewModel.onRefresh(searchQuery, startYear, endYear)
-            }
-        }
 
     private fun initRecycler() = with(binding) {
         val manager = LinearLayoutManager(requireContext())
@@ -223,25 +198,26 @@ class NasaImagesFragment : Fragment() {
                 itemsToLoad = 30,
             )
                 .onEach {
-                    viewModel.onLoadMore(searchQuery, startYear, endYear)
+                    viewModel.onLoadMore(
+                        searchParams.query,
+                        searchParams.startYear,
+                        searchParams.endYear
+                    )
                 }
                 .launchIn(viewLifecycleOwner.lifecycleScope)
         }
     }
 
+
     private fun initButtons() = with(binding) {
-        searchButton.setOnClickListener {
-            log("$searchQuery $startYear")
-
-            viewModel.onReload(searchQuery, startYear, endYear)
-            nasaImagesAdapter.submitList(emptyList())
-            binding.progressCircular.isVisible = true
-        }
-
         toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.settings -> {
                     findNavControllerById(R.id.container).navigate(NavGraphDirections.toSettings())
+                    true
+                }
+                R.id.search -> {
+                    findNavController().navigate(NavigationBottomDirections.toBottomSheetSearch())
                     true
                 }
                 else -> false
@@ -249,10 +225,15 @@ class NasaImagesFragment : Fragment() {
         }
     }
 
+
     private fun setInsets() = with(binding) {
         ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
             appBar.updatePadding(
-                top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+                top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top,
+            )
+            root.updatePadding(
+                left = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).left,
+                right = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).right,
             )
 
             WindowInsetsCompat.CONSUMED

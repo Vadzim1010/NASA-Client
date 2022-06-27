@@ -150,8 +150,8 @@ class MapFragment : Fragment() {
                 .launchIn(viewLifecycleOwner.lifecycleScope)
 
             map.setOnMarkerClickListener { marker ->
-                findNavControllerById(R.id.container).navigate(
-                    NavGraphDirections.toBottomSheet(
+                findNavController().navigate(
+                    MapFragmentDirections.toBottomSheet(
                         marker.title ?: ""
                     )
                 )
@@ -165,10 +165,11 @@ class MapFragment : Fragment() {
 
         ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
             val systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+            val navigationBarInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             mapView.setPadding(
-                systemBarInsets.left,
+                navigationBarInsets.left,
                 systemBarInsets.top,
-                systemBarInsets.right,
+                navigationBarInsets.right,
                 systemBarInsets.bottom
             )
 

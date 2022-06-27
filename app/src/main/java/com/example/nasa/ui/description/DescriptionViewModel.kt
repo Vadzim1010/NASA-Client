@@ -12,6 +12,7 @@ class DescriptionViewModel(
 
     private val descriptionFlow = MutableStateFlow(Unit)
 
+
     fun getDescriptionFlow() =
         descriptionFlow
             .flatMapLatest { getDescriptionUseCase(id) }

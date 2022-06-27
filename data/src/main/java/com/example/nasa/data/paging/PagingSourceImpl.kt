@@ -71,12 +71,12 @@ internal class PagingSourceImpl(
         .onEach { loadState ->
             isLoading = true
 
-            log("page $currentPage")
-            log("search params is: ${loadState.searchQuery} ${loadState.yearStart} ${loadState.yearEnd}")
-
             if (loadState is LoadState.Reload) {
                 currentPage = 1
             }
+
+            log("page $currentPage")
+            log("search params is: ${loadState.searchQuery} ${loadState.yearStart} ${loadState.yearEnd}")
         }
         .flatMapLatest { loadState ->
             getImagePageUseCase(
@@ -101,7 +101,6 @@ internal class PagingSourceImpl(
 
                     isLoading = false
 
-                    log("isLoading: $isLoading")
                     log("load internet success")
                 }
                 is Resource.Error -> {
@@ -117,18 +116,14 @@ internal class PagingSourceImpl(
 
                     isLoading = false
 
-                    log("isLoading: $isLoading")
                     log("load internet failed")
                 }
                 is Resource.Loading -> {
                     cacheList = emptyList()
                     cacheList = resource.data ?: emptyList()
 
-                    log("load cache")
+                    log("load cache from db")
                 }
             }
-        }
-        .onStart {
-            emit(Resource.Loading(cacheList))
         }
 }

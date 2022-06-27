@@ -64,7 +64,11 @@ class SettingsFragment : Fragment() {
     private fun setInsets() = with(binding) {
         ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
             appBar.updatePadding(
-                top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+                top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top,
+            )
+            root.updatePadding(
+                left = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).left,
+                right = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).right,
             )
 
             WindowInsetsCompat.CONSUMED

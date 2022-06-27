@@ -1,4 +1,4 @@
-package com.example.nasa.data.service.nigtmode
+package com.example.nasa.data.service
 
 import android.content.SharedPreferences
 import androidx.core.content.edit

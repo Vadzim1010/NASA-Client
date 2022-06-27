@@ -1,16 +1,13 @@
-package com.example.nasa.ui.flag
+package com.example.nasa.ui.map.flag
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import coil.load
-import com.example.nasa.data.util.log
 import com.example.nasa.databinding.BottomSheetBinding
 import com.example.nasa.domain.model.Resource
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -53,7 +50,7 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
                             image.load(countryDesc.data?.flagImageUrl)
                         }
                         is Resource.Error -> {
-                            showToast(countryDesc.throwable?.message ?: "")
+                            countryName.text = countryDesc.throwable?.message ?: ""
                         }
                         is Resource.Loading -> {
                             progressCircular.isVisible = true
@@ -67,9 +64,5 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun showToast(massage: String) {
-        Toast.makeText(requireContext(), massage, Toast.LENGTH_SHORT).show()
     }
 }

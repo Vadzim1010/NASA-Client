@@ -4,7 +4,7 @@ package com.example.nasa.domain.util
 const val MAX_PAGE = 100
 const val PAGE_SIZE = 100
 const val DEFAULT_SEARCH_QUERY = ""
-const val MAX_YEAR = 2022
-const val MIN_YEAR = 1920
+const val DEFAULT_END_YEAR = 2022
+const val DEFAULT_START_YEAR = 1920
 const val MEDIA_TYPE = "image"
 
