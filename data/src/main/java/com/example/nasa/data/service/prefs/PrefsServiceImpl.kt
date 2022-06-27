@@ -1,7 +1,6 @@
-package com.example.nasa.data.service.nigtmode
+package com.example.nasa.data.service.prefs
 
 import android.content.Context
-import com.example.nasa.data.service.PrefsDelegate
 import com.example.nasa.domain.model.NightMode
 import com.example.nasa.domain.model.SearchParams
 import com.example.nasa.domain.service.NightModeService

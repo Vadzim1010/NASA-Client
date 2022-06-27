@@ -1,4 +1,4 @@
-package com.example.nasa.data.service
+package com.example.nasa.data.service.prefs
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
