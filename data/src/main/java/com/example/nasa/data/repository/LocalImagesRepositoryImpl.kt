@@ -12,7 +12,6 @@ internal class LocalImagesRepositoryImpl(
     private val nasaImageDao: NasaImageDao,
 ) : LocalImagesRepository {
 
-
     override fun getImagePage(
         page: Int,
         query: String,

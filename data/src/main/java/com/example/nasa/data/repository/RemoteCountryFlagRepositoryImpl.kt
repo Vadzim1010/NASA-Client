@@ -11,7 +11,6 @@ class RemoteCountryFlagRepositoryImpl(
     private val countriesApi: CountriesApi,
 ) : RemoteCountryFlagRepository {
 
-
     override suspend fun getCountryByName(name: String): Result<CountryFlag> =
         runCatching {
             delay(2000) //delay for testing

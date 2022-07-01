@@ -1,9 +1,7 @@
 package com.example.nasa.domain.util
 
-
 import com.example.nasa.domain.model.Resource
 import kotlinx.coroutines.flow.*
-
 
 inline fun <ResultType, RequestType> networkBoundResource(
     crossinline query: () -> Flow<ResultType>,

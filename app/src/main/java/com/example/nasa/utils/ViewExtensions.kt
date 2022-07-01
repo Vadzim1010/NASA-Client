@@ -17,7 +17,6 @@ import com.example.nasa.R
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 
-
 fun RecyclerView.addScrollListenerFlow(
     layoutManager: LinearLayoutManager,
     itemsToLoad: Int
@@ -75,35 +74,6 @@ fun RecyclerView.addRightSpaceDecorationRes(@DimenRes spaceRes: Int) {
     })
 }
 
-fun Toolbar.onSearchListenerFlow() = callbackFlow {
-    val searchView = menu.findItem(R.id.search).actionView as SearchView
-    var isSearchStarted = false
-
-    val queryTextListener = object : SearchView.OnQueryTextListener {
-        override fun onQueryTextSubmit(query: String?): Boolean {
-            this@callbackFlow.trySend(SearchStatus.QueryTextSubmit(query ?: ""))
-            return true
-        }
-
-        override fun onQueryTextChange(newText: String?): Boolean {
-            // to not start search with empty query when init search line
-            if (isSearchStarted && newText.isNullOrBlank()) {
-                this@callbackFlow.trySend(SearchStatus.QueryTextSubmit(newText ?: ""))
-            } else {
-                this@callbackFlow.trySend(SearchStatus.QueryTextChange(newText ?: ""))
-            }
-            isSearchStarted = true
-            return true
-        }
-    }
-
-    searchView.setOnQueryTextListener(queryTextListener)
-
-    awaitClose {
-        searchView.setOnQueryTextListener(null)
-    }
-}
-
 fun EditText.onTextChangedListener() = callbackFlow {
     val watcher = this@onTextChangedListener.addTextChangedListener { editable ->
         this.trySend(editable)
@@ -111,9 +81,4 @@ fun EditText.onTextChangedListener() = callbackFlow {
     this.awaitClose {
         this@onTextChangedListener.removeTextChangedListener(watcher)
     }
-}
-
-sealed class SearchStatus() {
-    data class QueryTextChange(val text: String) : SearchStatus()
-    data class QueryTextSubmit(val text: String) : SearchStatus()
 }

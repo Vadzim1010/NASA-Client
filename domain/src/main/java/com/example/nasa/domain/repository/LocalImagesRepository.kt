@@ -3,9 +3,7 @@ package com.example.nasa.domain.repository
 import com.example.nasa.domain.model.NasaImage
 import kotlinx.coroutines.flow.Flow
 
-
 interface LocalImagesRepository {
-
 
     fun getImagePage(
         page: Int,

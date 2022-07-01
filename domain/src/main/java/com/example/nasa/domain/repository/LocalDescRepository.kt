@@ -5,9 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocalDescRepository {
 
-
     fun getDescription(id: String): Flow<List<Description>>
-
 
     suspend fun insertDescription(description: Description)
 }

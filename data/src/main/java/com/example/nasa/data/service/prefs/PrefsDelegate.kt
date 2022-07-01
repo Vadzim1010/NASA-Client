@@ -9,6 +9,7 @@ class PrefsDelegate<T>(
     private val getValue: SharedPreferences.() -> T,
     private val setValue: SharedPreferences.Editor.(T) -> Unit
 ) {
+
     operator fun getValue(thisRef: Any, property: KProperty<*>): T {
         return sharedPrefs.getValue()
     }

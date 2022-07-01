@@ -9,7 +9,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.material.appbar.AppBarLayout
 
-
 fun View.doOnApplyWindowInsets(
     initialOffset: Offset = Offset(),
     action: (View, WindowInsetsCompat, Offset) -> WindowInsetsCompat

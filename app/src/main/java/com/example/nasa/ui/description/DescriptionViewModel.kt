@@ -3,7 +3,8 @@ package com.example.nasa.ui.description
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nasa.domain.usecase.GetDescriptionUseCase
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.shareIn
 
 class DescriptionViewModel(
     getDescriptionUseCase: GetDescriptionUseCase,

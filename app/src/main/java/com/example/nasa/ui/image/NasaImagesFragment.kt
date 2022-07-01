@@ -8,9 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
@@ -30,7 +28,6 @@ import com.example.nasa.domain.util.mapToPage
 import com.example.nasa.ui.image.search.BottomSheetSearchFragment.Companion.IS_PARAMS_CHANGED_KEY
 import com.example.nasa.ui.image.search.BottomSheetSearchFragment.Companion.REQUEST_KEY
 import com.example.nasa.utils.*
-import com.google.android.material.internal.ViewUtils.doOnApplyWindowInsets
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel

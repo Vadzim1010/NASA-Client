@@ -7,4 +7,3 @@ const val DEFAULT_SEARCH_QUERY = ""
 const val DEFAULT_END_YEAR = 2022
 const val DEFAULT_START_YEAR = 1920
 const val MEDIA_TYPE = "image"
-

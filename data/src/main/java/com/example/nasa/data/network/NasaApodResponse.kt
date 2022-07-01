@@ -1,6 +1,6 @@
 package com.example.nasa.data.network
-import com.google.gson.annotations.SerializedName
 
+import com.google.gson.annotations.SerializedName
 
 internal data class NasaApodResponse(
     @SerializedName("date")

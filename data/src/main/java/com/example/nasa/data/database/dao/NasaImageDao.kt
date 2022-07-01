@@ -7,10 +7,8 @@ import androidx.room.Query
 import com.example.nasa.data.database.entity.NasaImageEntity
 import kotlinx.coroutines.flow.Flow
 
-
 @Dao
 internal interface NasaImageDao {
-
 
     @Query(
         """SELECT * FROM NasaImageEntity 

@@ -7,12 +7,10 @@ import com.example.nasa.domain.repository.RemoteImagesRepository
 import com.example.nasa.domain.util.networkBoundResource
 import kotlinx.coroutines.flow.Flow
 
-
 class GetImagePageUseCase(
     private val remoteRepository: RemoteImagesRepository,
     private val localRepository: LocalImagesRepository,
 ) {
-
 
     operator fun invoke(
         page: Int,

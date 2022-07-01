@@ -31,7 +31,6 @@ class PrefsServiceImpl(context: Context) : NightModeService, SearchParamsService
         }
     )
 
-
     private inline fun <reified E : Enum<E>> enumPref(key: String, defaultValue: E) =
         PrefsDelegate(
             sharedPrefs,

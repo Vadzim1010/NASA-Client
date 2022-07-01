@@ -6,7 +6,6 @@ import com.example.nasa.domain.util.MEDIA_TYPE
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-
 internal interface NasaImagesApi {
 
     @GET("/search")

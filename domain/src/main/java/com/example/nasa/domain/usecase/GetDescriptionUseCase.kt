@@ -12,7 +12,6 @@ class GetDescriptionUseCase(
     private val localDescRepository: LocalDescRepository
 ) {
 
-
     operator fun invoke(nasaId: String): Flow<Resource<List<Description>>> =
         networkBoundResource(
             query = {

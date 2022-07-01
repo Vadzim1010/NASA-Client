@@ -9,18 +9,18 @@ import com.example.nasa.domain.usecase.GetImagePageUseCase
 import com.example.nasa.domain.util.MAX_PAGE
 import com.example.nasa.domain.util.PAGE_SIZE
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.*
-
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onEach
 
 internal class PagingSourceImpl(
     private val getImagePageUseCase: GetImagePageUseCase
 ) : PagingSource {
 
-
     private val loadStateFlow = MutableSharedFlow<LoadState>(
         replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
-
 
     private var cacheList = listOf<NasaImage>()
 
@@ -29,7 +29,6 @@ internal class PagingSourceImpl(
     private var isLoading = false
 
     private var isLastPage = false
-
 
     override fun onLoadMore(searchQuery: String, yearStart: Int, yearEnd: Int) {
         if (!isLoading && !isLastPage) {

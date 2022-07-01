@@ -5,21 +5,18 @@ import com.example.nasa.data.database.entity.ApodEntity
 import com.example.nasa.data.database.entity.DescriptionEntity
 import com.example.nasa.data.database.entity.ImageDescriptionEntity
 import com.example.nasa.data.database.entity.NasaImageEntity
-import com.example.nasa.data.network.model.*
 import com.example.nasa.data.network.NasaApodResponse
+import com.example.nasa.data.network.model.*
 import com.example.nasa.domain.model.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.*
 
-
 internal fun Flow<List<NasaImageEntity>>.mapToDomain(): Flow<List<NasaImage>> =
     this.map { list -> list.map { it.toDomain() } }
 
-
 internal fun Flow<List<ImageDescriptionEntity>>.mapDescToDomain(): Flow<List<Description>> =
     this.map { list -> list.map { it.toDomain() } }
-
 
 internal fun Flow<List<ApodEntity>>.mapApodToDomain(): Flow<List<Apod>> =
     this.map { list -> list.map { it.toDomain() } }
@@ -44,7 +41,6 @@ internal fun NasaImageDto.mapToDomain(): List<NasaImage> = this
         )
     }
 
-
 internal fun DescriptionDto.mapToDomain(): List<Description> = this
     .collection
     .items
@@ -56,7 +52,6 @@ internal fun DescriptionDto.mapToDomain(): List<Description> = this
             imageUrl = item.links.getOrNull(0)?.href ?: "",
         )
     }
-
 
 internal fun List<NasaImage>.mapToEntity(
     page: Int,
@@ -76,7 +71,6 @@ internal fun List<NasaImage>.mapToEntity(
     )
 }
 
-
 internal fun Description.toEntity(): DescriptionEntity = DescriptionEntity(
     nasaImageId = this.nasaId,
     title = this.title,
@@ -84,20 +78,17 @@ internal fun Description.toEntity(): DescriptionEntity = DescriptionEntity(
     imageUrl = this.imageUrl
 )
 
-
 internal fun Apod.toEntity(): ApodEntity = ApodEntity(
     title = this.title,
     date = this.date,
     imageUrl = this.imageUrl,
 )
 
-
 internal fun ApodEntity.toDomain() = Apod(
     title = title,
     date = date,
     imageUrl = imageUrl,
 )
-
 
 internal fun ImageDescriptionEntity.toDomain() = Description(
     nasaId = descriptionEntity?.nasaImageId ?: "",
@@ -106,13 +97,11 @@ internal fun ImageDescriptionEntity.toDomain() = Description(
     imageUrl = nasaImageEntity.imageUrl
 )
 
-
 internal fun NasaImageEntity.toDomain() = NasaImage(
     id = id,
     imageUrl = imageUrl,
     totalHits = totalHits,
 )
-
 
 internal fun NasaApodResponse.toDomain(): Apod =
     ApodDto(
@@ -120,7 +109,6 @@ internal fun NasaApodResponse.toDomain(): Apod =
         date = this.date,
         imageUrl = this.url
     ).toDomain()
-
 
 internal fun ApodDto.toDomain() = Apod(
     title = title,

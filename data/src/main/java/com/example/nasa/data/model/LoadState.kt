@@ -4,7 +4,6 @@ import com.example.nasa.domain.util.DEFAULT_SEARCH_QUERY
 import com.example.nasa.domain.util.DEFAULT_END_YEAR
 import com.example.nasa.domain.util.DEFAULT_START_YEAR
 
-
 sealed class LoadState(
     val searchQuery: String = DEFAULT_SEARCH_QUERY,
     val yearStart: Int = DEFAULT_END_YEAR,

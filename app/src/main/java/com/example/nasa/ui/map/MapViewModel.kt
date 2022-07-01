@@ -39,7 +39,6 @@ class MapViewModel(
             replay = 1
         )
 
-
     fun loadCurrentLocation() {
         loadingFlow.tryEmit(Unit)
     }

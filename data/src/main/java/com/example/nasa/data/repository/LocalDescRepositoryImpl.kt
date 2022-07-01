@@ -13,11 +13,9 @@ class LocalDescRepositoryImpl(
     private val imageDescriptionDao: ImageDescriptionDao,
 ) : LocalDescRepository {
 
-
     override fun getDescription(id: String): Flow<List<Description>> =
         imageDescriptionDao.getImageDescription(id)
             .mapDescToDomain()
-
 
     override suspend fun insertDescription(description: Description) {
         descriptionDao.insertDescription(description.toEntity())

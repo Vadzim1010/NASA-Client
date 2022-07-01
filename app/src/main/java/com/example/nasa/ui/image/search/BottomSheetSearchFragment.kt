@@ -29,7 +29,6 @@ class BottomSheetSearchFragment : BottomSheetDialogFragment() {
 
     private val viewModel by viewModel<BottomSheetSearchViewModel>()
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -117,9 +116,7 @@ class BottomSheetSearchFragment : BottomSheetDialogFragment() {
         }
     }
 
-
     companion object {
-
         const val REQUEST_KEY = "request_key"
         const val IS_PARAMS_CHANGED_KEY = "is_params_changed"
     }

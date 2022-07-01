@@ -8,7 +8,6 @@ import com.example.nasa.data.database.entity.DescriptionEntity
 @Dao
 interface DescriptionDao {
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDescription(description: DescriptionEntity)
 }

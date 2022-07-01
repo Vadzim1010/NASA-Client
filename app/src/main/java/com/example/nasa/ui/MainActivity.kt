@@ -13,7 +13,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private val nightModeService by inject<NightModeService>()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initNightModeService()

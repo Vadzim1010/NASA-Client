@@ -10,7 +10,6 @@ internal class RemoteDescRepositoryImpl(
     private val nasaImagesApi: NasaImagesApi
 ) : RemoteDescRepository {
 
-
     override suspend fun fetchDescription(nasaId: String): Result<Description> = runCatching {
         delay(2000) // delay for testing
         nasaImagesApi.getDescription(nasaId)

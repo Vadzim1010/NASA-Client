@@ -2,7 +2,6 @@ package com.example.nasa.data.network
 
 import com.google.gson.annotations.SerializedName
 
-
 data class CountriesResponseItem(
     @SerializedName("altSpellings")
     val altSpellings: List<String>,

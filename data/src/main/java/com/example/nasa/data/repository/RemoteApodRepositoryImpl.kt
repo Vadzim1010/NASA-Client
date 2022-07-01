@@ -9,7 +9,6 @@ import kotlinx.coroutines.delay
 
 internal class RemoteApodRepositoryImpl(private val nasaApi: NasaApi) : RemoteApodRepository {
 
-
     override suspend fun fetchPictureOfDay(): Result<Apod> = runCatching {
         delay(2000) //delay for testing
         nasaApi.getPictureOfDay(BuildConfig.NASA_API_KEY)

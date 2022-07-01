@@ -10,7 +10,6 @@
         android:name="com.example.nasa.ui.NavHomeFragment"
         tools:layout="@layout/fragment_bottom_nav" />
 
-
     <fragment
         android:id="@+id/description"
         android:name="com.example.nasa.ui.description.DescriptionFragment"
@@ -42,4 +41,5 @@
         app:exitAnim="@anim/nav_default_pop_exit_anim"
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
         app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
 </navigation>

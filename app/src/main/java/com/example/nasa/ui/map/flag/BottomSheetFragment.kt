@@ -1,6 +1,5 @@
 package com.example.nasa.ui.map.flag
 
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,7 +29,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
     private val args by navArgs<BottomSheetFragmentArgs>()
 
     private val viewModel by viewModel<BottomSheetViewModel> { parametersOf(args.countryName) }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
