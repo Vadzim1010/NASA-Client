@@ -5,19 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.example.nasa.R
 import com.example.nasa.databinding.FragmentBottomNavBinding
-import com.example.nasa.utils.findNavControllerById
 import com.example.nasa.utils.findNestedController
 
-class BottomNavFragment : Fragment() {
-
+class NavHomeFragment : Fragment() {
 
     private var _binding: FragmentBottomNavBinding? = null
-    private val binding get() = requireNotNull(_binding) { "binding is null $_binding" }
 
+    private val binding get() = requireNotNull(_binding) { "binding is null $_binding" }
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -6,14 +6,12 @@ import com.example.nasa.domain.usecase.GetApodUseCase
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.shareIn
 
-class ApodViewModel(private val getApodUseCase: GetApodUseCase) : ViewModel() {
+class ApodViewModel(getApodUseCase: GetApodUseCase) : ViewModel() {
 
-
-    fun fetchPictureOfDay() =
-        getApodUseCase()
-            .shareIn(
-                scope = viewModelScope,
-                started = SharingStarted.Eagerly,
-                replay = 1,
-            )
+    val apodFlow = getApodUseCase()
+        .shareIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            replay = 1,
+        )
 }

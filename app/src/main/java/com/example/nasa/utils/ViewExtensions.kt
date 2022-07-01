@@ -58,6 +58,23 @@ fun RecyclerView.addBottomSpaceDecorationRes(@DimenRes spaceRes: Int) {
     })
 }
 
+fun RecyclerView.addRightSpaceDecorationRes(@DimenRes spaceRes: Int) {
+    addItemDecoration(object : RecyclerView.ItemDecoration() {
+        override fun getItemOffsets(
+            outRect: Rect,
+            view: View,
+            parent: RecyclerView,
+            state: RecyclerView.State
+        ) {
+            val itemCount = parent.adapter?.itemCount ?: return
+            val position = parent.getChildAdapterPosition(view)
+            if (position != itemCount - 1) {
+                outRect.right = spaceRes
+            }
+        }
+    })
+}
+
 fun Toolbar.onSearchListenerFlow() = callbackFlow {
     val searchView = menu.findItem(R.id.search).actionView as SearchView
     var isSearchStarted = false

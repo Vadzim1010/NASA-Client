@@ -15,11 +15,13 @@
         android:name="com.example.nasa.ui.image.NasaImagesFragment"
         tools:layout="@layout/fragment_nasa_images">
 
-        <argument
-            android:name="search_params"
-            android:defaultValue="@null"
-            app:argType="com.example.nasa.domain.model.SearchParams"
-            app:nullable="true" />
+        <action
+            android:id="@+id/to_bottom_sheet_search"
+            app:destination="@+id/bottom_sheet_search"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_pop_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 
     </fragment>
 
@@ -43,13 +45,6 @@
         android:name="com.example.nasa.ui.image.search.BottomSheetSearchFragment"
         tools:layout="@layout/bottom_sheet_search">
 
-        <action
-            android:id="@+id/to_images_list"
-            app:destination="@+id/images_list"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_pop_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </dialog>
 
     <dialog
@@ -62,13 +57,5 @@
             app:argType="string" />
 
     </dialog>
-
-    <action
-        android:id="@+id/to_bottom_sheet_search"
-        app:destination="@+id/bottom_sheet_search"
-        app:enterAnim="@anim/nav_default_enter_anim"
-        app:exitAnim="@anim/nav_default_pop_exit_anim"
-        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 
 </navigation>

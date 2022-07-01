@@ -8,4 +8,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="on_primary_color">#FFFFFF</color>
+
+    <color name="color_system_bar">#1A000000</color>
 </resources>

@@ -20,19 +20,19 @@ import com.example.nasa.databinding.FragmentApodBinding
 import com.example.nasa.domain.model.Apod
 import com.example.nasa.domain.model.Resource
 import com.example.nasa.domain.util.emptyApod
+import com.example.nasa.utils.applyWindowInsets
 import com.example.nasa.utils.findNavControllerById
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-
 class ApodFragment : Fragment() {
 
     private var _binding: FragmentApodBinding? = null
+
     private val binding get() = requireNotNull(_binding) { "binding is $_binding" }
 
     private val viewModel by viewModel<ApodViewModel>()
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,9 +47,10 @@ class ApodFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.appBar.applyWindowInsets()
+
         initButtons()
         subscribeOnDataFlow()
-        setInsets()
     }
 
     override fun onDestroyView() {
@@ -58,7 +59,7 @@ class ApodFragment : Fragment() {
     }
 
     private fun subscribeOnDataFlow() {
-        viewModel.fetchPictureOfDay()
+        viewModel.apodFlow
             .onEach(::render)
             .launchIn(viewLifecycleOwner.lifecycleScope)
     }
@@ -95,20 +96,6 @@ class ApodFragment : Fragment() {
 
     private fun showToast(massage: String?) {
         Toast.makeText(requireContext(), massage, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun setInsets() = with(binding) {
-        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
-            appBar.updatePadding(
-                top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top,
-            )
-            root.updatePadding(
-                left = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).left,
-                right = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).right,
-            )
-
-            WindowInsetsCompat.CONSUMED
-        }
     }
 
     private fun initButtons() = with(binding) {

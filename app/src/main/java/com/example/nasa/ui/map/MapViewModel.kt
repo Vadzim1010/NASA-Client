@@ -5,47 +5,41 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nasa.data.service.location.LocationService
 import com.example.nasa.domain.usecase.GetCountriesUseCase
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
-@SuppressLint("MissingPermission")
 class MapViewModel(
     private val locationService: LocationService,
     private val getCountriesUseCase: GetCountriesUseCase,
 ) : ViewModel() {
 
+    private val loadingFlow = MutableStateFlow(Unit)
 
-    private val countriesFlow = MutableStateFlow(Unit)
+    @SuppressLint("MissingPermission")
+    val currentLocationFlow = loadingFlow
+        .mapLatest { locationService.getCurrentLocation() }
+        .shareIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            replay = 0
+        )
 
-    private val locationFlow = MutableSharedFlow<Unit>(
-        onBufferOverflow = BufferOverflow.DROP_OLDEST, extraBufferCapacity = 1,
-    )
-
-
-    fun getCurrentLocationFlow() =
-        locationFlow
-            .mapLatest {
-                locationService.getCurrentLocation()
-            }
-            .shareIn(
-                scope = viewModelScope,
-                started = SharingStarted.Lazily,
-                replay = 1
-            )
-
-    fun getCountriesFLow() = countriesFlow
-        .flatMapLatest {
-            getCountriesUseCase()
-        }
+    val countriesFLow = flow { emitAll(getCountriesUseCase()) }
         .shareIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
             replay = 1
         )
 
-    fun getLocationFlow() = locationService.getLocationFlow()
+    @SuppressLint("MissingPermission")
+    val locationFlow = locationService
+        .getLocationFlow()
+        .shareIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            replay = 1
+        )
 
     fun loadCurrentLocation() {
-        locationFlow.tryEmit(Unit)
+        loadingFlow.tryEmit(Unit)
     }
 }

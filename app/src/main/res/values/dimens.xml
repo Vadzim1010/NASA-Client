@@ -6,4 +6,5 @@
     <dimen name="app_padding_small">8dp</dimen>
     <dimen name="app_text_size_big">30sp</dimen>
     <dimen name="app_image_button_size">80dp</dimen>
+    <dimen name="app_elevation">24dp</dimen>
 </resources>

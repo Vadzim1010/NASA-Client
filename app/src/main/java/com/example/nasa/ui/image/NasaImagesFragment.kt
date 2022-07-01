@@ -1,5 +1,6 @@
 package com.example.nasa.ui.image
 
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,18 +8,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavArgs
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nasa.NavGraphDirections
-import com.example.nasa.NavigationBottomDirections
 import com.example.nasa.R
 import com.example.nasa.adapter.NasaImagesAdapter
 import com.example.nasa.data.util.log
@@ -26,32 +24,22 @@ import com.example.nasa.databinding.FragmentNasaImagesBinding
 import com.example.nasa.domain.model.NasaImage
 import com.example.nasa.domain.model.PagingItem
 import com.example.nasa.domain.model.Resource
-import com.example.nasa.domain.model.SearchParams
-import com.example.nasa.domain.util.*
-import com.example.nasa.utils.addBottomSpaceDecorationRes
-import com.example.nasa.utils.addScrollListenerFlow
-import com.example.nasa.utils.findNavControllerById
+import com.example.nasa.domain.util.MAX_PAGE
+import com.example.nasa.domain.util.PAGE_SIZE
+import com.example.nasa.domain.util.mapToPage
+import com.example.nasa.ui.image.search.BottomSheetSearchFragment.Companion.IS_PARAMS_CHANGED_KEY
+import com.example.nasa.ui.image.search.BottomSheetSearchFragment.Companion.REQUEST_KEY
+import com.example.nasa.utils.*
+import com.google.android.material.internal.ViewUtils.doOnApplyWindowInsets
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
-
 
 class NasaImagesFragment : Fragment() {
 
-
     private var _binding: FragmentNasaImagesBinding? = null
+
     private val binding get() = requireNotNull(_binding) { "binding is $_binding" }
-
-    private val args by navArgs<NasaImagesFragmentArgs>()
-
-    private val searchParams by lazy {
-        args.searchParams ?: SearchParams(
-            query = viewModel.searchParams.query,
-            startYear = viewModel.searchParams.startYear,
-            endYear = viewModel.searchParams.endYear,
-        )
-    }
 
     private val viewModel by viewModel<NasaImageViewModel>()
 
@@ -66,14 +54,9 @@ class NasaImagesFragment : Fragment() {
                 )
             },
             onReloadButtonClicked = {
-                viewModel.onRefresh(
-                    searchParams.query,
-                    searchParams.startYear,
-                    searchParams.endYear
-                )
+                viewModel.onRefresh()
             })
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -88,19 +71,18 @@ class NasaImagesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setInsets()
+        applyInsets()
+        initSearchParamsChangeListener()
         initButtons()
         initRecycler()
         initSwipeRefresh()
         subscribeOnDataFlow()
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
 
     private fun subscribeOnDataFlow() {
         viewModel
@@ -108,7 +90,6 @@ class NasaImagesFragment : Fragment() {
             .onEach(::render)
             .launchIn(viewLifecycleOwner.lifecycleScope)
     }
-
 
     private fun render(resource: Resource<List<NasaImage>>) = with(binding) {
         val imageList = resource.data ?: emptyList()
@@ -179,35 +160,39 @@ class NasaImagesFragment : Fragment() {
         }
     }
 
-
     private fun initSwipeRefresh() = with(binding) {
         swipeRefresh.setOnRefreshListener {
-            viewModel.onReload(searchParams.query, searchParams.startYear, searchParams.endYear)
+            viewModel.onReload()
         }
     }
 
-
     private fun initRecycler() = with(binding) {
-        val manager = LinearLayoutManager(requireContext())
+        val orientation = resources.configuration.orientation
+
+        val manager = if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        } else {
+            LinearLayoutManager(requireContext())
+        }
+
         recycler.apply {
             layoutManager = manager
             adapter = nasaImagesAdapter
-            addBottomSpaceDecorationRes(resources.getDimensionPixelSize(R.dimen.app_padding_medium))
+            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                addRightSpaceDecorationRes(resources.getDimensionPixelSize(R.dimen.app_padding_medium))
+            } else {
+                addBottomSpaceDecorationRes(resources.getDimensionPixelSize(R.dimen.app_padding_medium))
+            }
             addScrollListenerFlow(
                 layoutManager = manager,
                 itemsToLoad = 30,
             )
                 .onEach {
-                    viewModel.onLoadMore(
-                        searchParams.query,
-                        searchParams.startYear,
-                        searchParams.endYear
-                    )
+                    viewModel.onLoadMore()
                 }
                 .launchIn(viewLifecycleOwner.lifecycleScope)
         }
     }
-
 
     private fun initButtons() = with(binding) {
         toolbar.setOnMenuItemClickListener { item ->
@@ -217,7 +202,7 @@ class NasaImagesFragment : Fragment() {
                     true
                 }
                 R.id.search -> {
-                    findNavController().navigate(NavigationBottomDirections.toBottomSheetSearch())
+                    findNavController().navigate(NasaImagesFragmentDirections.toBottomSheetSearch())
                     true
                 }
                 else -> false
@@ -225,18 +210,20 @@ class NasaImagesFragment : Fragment() {
         }
     }
 
+    private fun initSearchParamsChangeListener() {
+        setFragmentResultListener(REQUEST_KEY) { _, bundle ->
+            val isSearchParamsChanged = bundle.getBoolean(IS_PARAMS_CHANGED_KEY)
 
-    private fun setInsets() = with(binding) {
-        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
-            appBar.updatePadding(
-                top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top,
-            )
-            root.updatePadding(
-                left = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).left,
-                right = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).right,
-            )
-
-            WindowInsetsCompat.CONSUMED
+            if (isSearchParamsChanged) {
+                viewModel.onReload()
+                binding.progressCircular.isVisible = true
+                nasaImagesAdapter.submitList(emptyList())
+            }
         }
+    }
+
+    private fun applyInsets() = with(binding) {
+        appBar.applyWindowInsets()
+        recycler.applyHorizontalWindowInsets()
     }
 }

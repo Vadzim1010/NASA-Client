@@ -21,6 +21,7 @@ import com.example.nasa.databinding.FragmentDescriptionBinding
 import com.example.nasa.domain.model.Description
 import com.example.nasa.domain.model.Resource
 import com.example.nasa.domain.util.emptyDescription
+import com.example.nasa.utils.applyWindowInsets
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -28,8 +29,8 @@ import org.koin.core.parameter.parametersOf
 
 class DescriptionFragment : Fragment() {
 
-
     private var _binding: FragmentDescriptionBinding? = null
+
     private val binding get() = requireNotNull(_binding) { "binding is $_binding" }
 
     private val args by navArgs<DescriptionFragmentArgs>()
@@ -37,7 +38,6 @@ class DescriptionFragment : Fragment() {
     private val nasaId by lazy { args.itemId }
 
     private val viewModel by viewModel<DescriptionViewModel> { parametersOf(nasaId) }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,7 +52,8 @@ class DescriptionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setInsets()
+        binding.appBar.applyWindowInsets()
+
         initButtons()
         subscribeOnDataFlow()
     }
@@ -67,7 +68,7 @@ class DescriptionFragment : Fragment() {
     }
 
     private fun subscribeOnDataFlow() {
-        viewModel.getDescriptionFlow()
+        viewModel.descriptionFlow
             .onEach(::render)
             .launchIn(viewLifecycleOwner.lifecycleScope)
     }
@@ -82,7 +83,6 @@ class DescriptionFragment : Fragment() {
         when (resource) {
             is Resource.Success -> {
                 progressCircular.isVisible = false
-                log("load internet")
             }
             is Resource.Error -> {
                 progressCircular.isVisible = false
@@ -106,19 +106,5 @@ class DescriptionFragment : Fragment() {
 
     private fun showToast(massage: String?) {
         Toast.makeText(requireContext(), massage, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun setInsets() = with(binding) {
-        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
-            appBar.updatePadding(
-                top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top,
-            )
-            root.updatePadding(
-                left = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).left,
-                right = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).right,
-            )
-
-            WindowInsetsCompat.CONSUMED
-        }
     }
 }

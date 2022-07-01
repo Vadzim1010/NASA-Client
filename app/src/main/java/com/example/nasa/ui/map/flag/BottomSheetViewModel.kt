@@ -13,16 +13,15 @@ class BottomSheetViewModel(
     private val name: String,
 ) : ViewModel() {
 
-    private val countyDescFlow = MutableStateFlow(Unit)
+    private val loadFlow = MutableStateFlow(Unit)
 
-    fun getCountryDescFlow() =
-        countyDescFlow
-            .flatMapLatest {
-                getCountryDescUseCase(name)
-            }
-            .shareIn(
-                scope = viewModelScope,
-                started = SharingStarted.Lazily,
-                replay = 1
-            )
+    val getCountryDescFlow = loadFlow
+        .flatMapLatest {
+            getCountryDescUseCase(name)
+        }
+        .shareIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            replay = 1
+        )
 }

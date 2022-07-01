@@ -21,9 +21,7 @@ class NasaImagesAdapter(
     private val onReloadButtonClicked: () -> Unit,
 ) : ListAdapter<PagingItem<NasaImage>, RecyclerView.ViewHolder>(DIF_UTIL) {
 
-
     private val layoutInflater = LayoutInflater.from(context)
-
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
@@ -79,7 +77,6 @@ class NasaImagesAdapter(
         private const val TYPE_CONTENT = 0
         private const val TYPE_ERROR = 1
         private const val TYPE_LOADING = 2
-
 
         val DIF_UTIL = object : DiffUtil.ItemCallback<PagingItem<NasaImage>>() {
             override fun areItemsTheSame(

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/bottom_navigation"
-        android:name="com.example.nasa.ui.BottomNavFragment"
+        android:name="com.example.nasa.ui.NavHomeFragment"
         tools:layout="@layout/fragment_bottom_nav" />
 
 
