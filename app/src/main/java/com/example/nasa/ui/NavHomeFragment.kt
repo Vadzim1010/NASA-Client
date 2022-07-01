@@ -15,6 +15,7 @@ class NavHomeFragment : Fragment() {
 
     private val binding get() = requireNotNull(_binding) { "binding is null $_binding" }
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

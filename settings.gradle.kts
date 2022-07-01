@@ -8,11 +8,13 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        gradlePluginPortal()
         google()
         mavenCentral()
     }
 }
 rootProject.name = "NASA"
-include ':app'
-include ':data'
-include ':domain'
+include(":app")
+include(":domain")
+include(":data")
+enableFeaturePreview("VERSION_CATALOGS")

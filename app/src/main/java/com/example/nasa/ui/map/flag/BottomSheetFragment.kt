@@ -83,10 +83,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun applyInsets() {
-        val orientation = resources.configuration.orientation
-
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            dialog?.window?.decorView?.applyWindowInsets()
-        }
+        dialog?.window?.decorView?.applyWindowInsets()
     }
 }
