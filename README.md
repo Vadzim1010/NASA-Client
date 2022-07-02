@@ -1,4 +1,4 @@
-# Popular Movie List Sample App (Compose/Navigation)
+# NASA Client Sample App
 
 ## About
 
