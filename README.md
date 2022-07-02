@@ -42,4 +42,4 @@ Fragments, Activities and other classes responsible for UI.
 * [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) - the realization of MVVM architecture.
 * [Coil](https://github.com/coil-kt/coil) - an image loading library for Android backed by Kotlin Coroutines.
 * [Koin](https://github.com/InsertKoinIO/koin) - a dependency injection framework for Kotlin.
-* [Google Map](https://developers.google.com/maps/documentation/android-sdk) - for working with maps  
+* [Google Map](https://developers.google.com/maps/documentation/android-sdk) - for working with map  
