@@ -26,8 +26,4 @@ internal val databaseModule = module {
     single {
         get<NasaDatabase>().getImageDescriptionDao()
     }
-
-    single {
-        get<NasaDatabase>().getApodDao()
-    }
 }

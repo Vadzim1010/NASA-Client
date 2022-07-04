@@ -2,11 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/apod"
-        android:icon="@drawable/ic_baseline_grade_24"
-        android:title="@string/image_of_day" />
-
-    <item
         android:id="@+id/images_list"
         android:icon="@drawable/ic_baseline_manage_search_24"
         android:title="@string/search_images" />

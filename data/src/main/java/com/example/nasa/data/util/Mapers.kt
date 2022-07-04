@@ -1,11 +1,9 @@
 package com.example.nasa.data.util
 
 import android.util.Log
-import com.example.nasa.data.database.entity.ApodEntity
 import com.example.nasa.data.database.entity.DescriptionEntity
 import com.example.nasa.data.database.entity.ImageDescriptionEntity
 import com.example.nasa.data.database.entity.NasaImageEntity
-import com.example.nasa.data.network.NasaApodResponse
 import com.example.nasa.data.network.model.*
 import com.example.nasa.domain.model.*
 import kotlinx.coroutines.flow.Flow
@@ -16,9 +14,6 @@ internal fun Flow<List<NasaImageEntity>>.mapToDomain(): Flow<List<NasaImage>> =
     this.map { list -> list.map { it.toDomain() } }
 
 internal fun Flow<List<ImageDescriptionEntity>>.mapDescToDomain(): Flow<List<Description>> =
-    this.map { list -> list.map { it.toDomain() } }
-
-internal fun Flow<List<ApodEntity>>.mapApodToDomain(): Flow<List<Apod>> =
     this.map { list -> list.map { it.toDomain() } }
 
 internal fun List<CountryDto>.mapToDomain(): List<Country> =
@@ -78,18 +73,6 @@ internal fun Description.toEntity(): DescriptionEntity = DescriptionEntity(
     imageUrl = this.imageUrl
 )
 
-internal fun Apod.toEntity(): ApodEntity = ApodEntity(
-    title = this.title,
-    date = this.date,
-    imageUrl = this.imageUrl,
-)
-
-internal fun ApodEntity.toDomain() = Apod(
-    title = title,
-    date = date,
-    imageUrl = imageUrl,
-)
-
 internal fun ImageDescriptionEntity.toDomain() = Description(
     nasaId = descriptionEntity?.nasaImageId ?: "",
     title = descriptionEntity?.title ?: "",
@@ -101,19 +84,6 @@ internal fun NasaImageEntity.toDomain() = NasaImage(
     id = id,
     imageUrl = imageUrl,
     totalHits = totalHits,
-)
-
-internal fun NasaApodResponse.toDomain(): Apod =
-    ApodDto(
-        title = this.title,
-        date = this.date,
-        imageUrl = this.url
-    ).toDomain()
-
-internal fun ApodDto.toDomain() = Apod(
-    title = title,
-    date = date,
-    imageUrl = imageUrl
 )
 
 internal fun CountryFlagDto.toDomain() =

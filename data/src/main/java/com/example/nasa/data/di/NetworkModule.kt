@@ -2,7 +2,6 @@ package com.example.nasa.data.di
 
 import com.example.nasa.data.BuildConfig
 import com.example.nasa.data.network.api.CountriesApi
-import com.example.nasa.data.network.api.NasaApi
 import com.example.nasa.data.network.api.NasaImagesApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -32,13 +31,6 @@ internal val networkModule = module {
             .baseUrl(BuildConfig.NASA_IMAGES_ENDPOINT)
             .build()
             .create<NasaImagesApi>()
-    }
-
-    single {
-        get<Retrofit.Builder>()
-            .baseUrl(BuildConfig.NASA_ENDPOINT)
-            .build()
-            .create<NasaApi>()
     }
 
     single {

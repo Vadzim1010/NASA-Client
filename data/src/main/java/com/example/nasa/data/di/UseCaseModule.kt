@@ -7,7 +7,6 @@ import org.koin.dsl.module
 internal val useCaseModule = module {
     singleOf(::GetImagePageUseCase)
     singleOf(::GetDescriptionUseCase)
-    singleOf(::GetApodUseCase)
     singleOf(::GetCountriesUseCase)
     singleOf(::GetCountryDescUseCase)
 }

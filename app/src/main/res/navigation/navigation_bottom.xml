@@ -6,11 +6,6 @@
     app:startDestination="@id/images_list">
 
     <fragment
-        android:id="@+id/apod"
-        android:name="com.example.nasa.ui.apod.ApodFragment"
-        tools:layout="@layout/fragment_apod" />
-
-    <fragment
         android:id="@+id/images_list"
         android:name="com.example.nasa.ui.image.NasaImagesFragment"
         tools:layout="@layout/fragment_nasa_images">
