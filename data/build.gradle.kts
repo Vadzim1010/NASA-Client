@@ -12,12 +12,10 @@ android {
         targetSdk = libs.versions.targetSdk.get().toInt()
 
         val nasaApiKey: String by project
-        val nasaUrl: String by project
         val nasaImagesUrl: String by project
         val countriesUrl: String by project
 
         buildConfigField("String", "NASA_API_KEY", nasaApiKey)
-        buildConfigField("String", "NASA_ENDPOINT", nasaUrl)
         buildConfigField("String", "NASA_IMAGES_ENDPOINT", nasaImagesUrl)
         buildConfigField("String", "COUNTRIES_ENDPOINT", countriesUrl)
 
