@@ -88,72 +88,11 @@ class NasaImagesFragment : Fragment() {
             .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
-    private fun render(resource: Resource<List<NasaImage>>) = with(binding) {
-        val imageList = resource.data ?: emptyList()
-        val throwable = resource.throwable
-        val totalHits = imageList.lastOrNull()?.totalHits ?: 0
-
+    private fun render(resource: Resource<List<NasaImage>>) {
         when (resource) {
-            is Resource.Success -> {
-                progressCircular.isVisible = false
-                swipeRefresh.isRefreshing = false
-
-                log("content size: ${imageList.size}")
-                log("total content length: $totalHits")
-
-                if (imageList.isEmpty()) {
-                    noDataInfoTextView.isVisible = true
-                    noDataInfoTextView.text = getString(R.string.no_data)
-                } else {
-                    noDataInfoTextView.isVisible = false
-                }
-
-                val pagingList =
-                    if (totalHits > imageList.size || imageList.size >= MAX_PAGE * PAGE_SIZE) {
-                        imageList.mapToPage
-                            .plus(PagingItem.Loading)
-                    } else {
-                        imageList.mapToPage
-                    }
-
-                nasaImagesAdapter.submitList(pagingList)
-            }
-            is Resource.Error -> {
-                progressCircular.isVisible = false
-                swipeRefresh.isRefreshing = false
-
-                log("content size: ${imageList.size}")
-                log("total content length: $totalHits")
-
-                if (imageList.isEmpty()) {
-                    noDataInfoTextView.isVisible = true
-                    noDataInfoTextView.text = buildSpannedString {
-                        color(Color.RED) {
-                            append(throwable?.message)
-                        }
-                    }
-                } else {
-                    noDataInfoTextView.isVisible = false
-                }
-
-                val pagingList = if (imageList.isNotEmpty()) {
-                    imageList.mapToPage
-                        .plus(throwable
-                            ?.let { PagingItem.Error(it) })
-                } else {
-                    imageList.mapToPage
-                }
-
-                nasaImagesAdapter.submitList(pagingList)
-            }
-            is Resource.Loading -> {
-                progressCircular.isVisible = imageList.isNullOrEmpty()
-                noDataInfoTextView.isVisible = false
-
-                if (imageList.size > nasaImagesAdapter.currentList.size) {
-                    nasaImagesAdapter.submitList(imageList.mapToPage)
-                }
-            }
+            is Resource.Success -> onSuccessScreen(resource)
+            is Resource.Error -> onErrorScreen(resource)
+            is Resource.Loading -> onLoadingScreen(resource)
         }
     }
 
@@ -175,15 +114,14 @@ class NasaImagesFragment : Fragment() {
         recycler.apply {
             layoutManager = manager
             adapter = nasaImagesAdapter
+
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 addRightSpaceDecorationRes(resources.getDimensionPixelSize(R.dimen.app_padding_medium))
             } else {
                 addBottomSpaceDecorationRes(resources.getDimensionPixelSize(R.dimen.app_padding_medium))
             }
-            addScrollListenerFlow(
-                layoutManager = manager,
-                itemsToLoad = 30,
-            )
+
+            addScrollListenerFlow(layoutManager = manager, itemsToLoad = 30)
                 .onEach {
                     viewModel.onLoadMore()
                 }
@@ -222,5 +160,77 @@ class NasaImagesFragment : Fragment() {
     private fun applyInsets() = with(binding) {
         appBar.applyWindowInsets()
         recycler.applyHorizontalWindowInsets()
+    }
+
+    private fun onSuccessScreen(resource: Resource<List<NasaImage>>) = with(binding) {
+        val imageList = resource.data ?: emptyList()
+        val totalHits = imageList.lastOrNull()?.totalHits ?: 0
+
+        progressCircular.isVisible = false
+        swipeRefresh.isRefreshing = false
+
+        log("content size: ${imageList.size}")
+        log("total content length: $totalHits")
+
+        if (imageList.isEmpty()) {
+            noDataInfoTextView.isVisible = true
+            noDataInfoTextView.text = getString(R.string.no_data)
+        } else {
+            noDataInfoTextView.isVisible = false
+        }
+
+        val pagingList =
+            if (totalHits > imageList.size || imageList.size >= MAX_PAGE * PAGE_SIZE) {
+                imageList.mapToPage
+                    .plus(PagingItem.Loading)
+            } else {
+                imageList.mapToPage
+            }
+
+        nasaImagesAdapter.submitList(pagingList)
+    }
+
+    private fun onErrorScreen(resource: Resource<List<NasaImage>>) = with(binding) {
+        val imageList = resource.data ?: emptyList()
+        val throwable = resource.throwable
+        val totalHits = imageList.lastOrNull()?.totalHits ?: 0
+
+        progressCircular.isVisible = false
+        swipeRefresh.isRefreshing = false
+
+        log("content size: ${imageList.size}")
+        log("total content length: $totalHits")
+
+        if (imageList.isEmpty()) {
+            noDataInfoTextView.isVisible = true
+            noDataInfoTextView.text = buildSpannedString {
+                color(Color.RED) {
+                    append(throwable?.message)
+                }
+            }
+        } else {
+            noDataInfoTextView.isVisible = false
+        }
+
+        val pagingList = if (imageList.isNotEmpty()) {
+            imageList.mapToPage
+                .plus(throwable
+                    ?.let { PagingItem.Error(it) })
+        } else {
+            imageList.mapToPage
+        }
+
+        nasaImagesAdapter.submitList(pagingList)
+    }
+
+    private fun onLoadingScreen(resource: Resource<List<NasaImage>>) = with(binding) {
+        val imageList = resource.data ?: emptyList()
+
+        progressCircular.isVisible = imageList.isNullOrEmpty()
+        noDataInfoTextView.isVisible = false
+
+        if (imageList.size > nasaImagesAdapter.currentList.size) {
+            nasaImagesAdapter.submitList(imageList.mapToPage)
+        }
     }
 }
