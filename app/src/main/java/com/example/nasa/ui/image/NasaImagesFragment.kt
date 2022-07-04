@@ -226,7 +226,7 @@ class NasaImagesFragment : Fragment() {
     private fun onLoadingScreen(resource: Resource<List<NasaImage>>) = with(binding) {
         val imageList = resource.data ?: emptyList()
 
-        progressCircular.isVisible = imageList.isNullOrEmpty()
+        progressCircular.isVisible = imageList.isEmpty()
         noDataInfoTextView.isVisible = false
 
         if (imageList.size > nasaImagesAdapter.currentList.size) {
