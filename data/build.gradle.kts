@@ -60,9 +60,14 @@ dependencies {
     // Koin
     implementation(libs.koin)
 
-    //Google maps
+    // Google maps
     implementation(libs.google.location)
 
+    // Tests
+    testImplementation(libs.test.kotlin.coroutines)
+    testImplementation(libs.test.androidx.core)
+    testImplementation(libs.test.robolectric)
+    testImplementation(libs.test.mockk)
     testImplementation(libs.test.junit)
     androidTestImplementation(libs.test.androidx.junit)
     androidTestImplementation(libs.test.androidx.espresso)

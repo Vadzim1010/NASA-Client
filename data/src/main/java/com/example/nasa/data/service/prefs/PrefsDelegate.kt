@@ -10,11 +10,11 @@ class PrefsDelegate<T>(
     private val setValue: SharedPreferences.Editor.(T) -> Unit
 ) {
 
-    operator fun getValue(thisRef: Any, property: KProperty<*>): T {
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
         return sharedPrefs.getValue()
     }
 
-    operator fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
+    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
         sharedPrefs.edit { setValue(value) }
     }
 }
